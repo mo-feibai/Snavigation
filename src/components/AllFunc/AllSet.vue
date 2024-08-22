@@ -240,7 +240,14 @@
               <span class="title">配置备份</span>
               <span class="tip">将站点配置及个性化内容进行备份</span>
             </div>
-            <n-button strong secondary @click="backupSite"> 备份</n-button>
+            <n-button strong secondary @click="doBackup(false)"> 备份</n-button>
+          </n-card>
+          <n-card class="set-item">
+            <div class="name">
+              <span class="title">书签备份</span>
+              <span class="tip">将站点收藏的书签内容进行备份</span>
+            </div>
+            <n-button strong secondary @click="doBackup(true)"> 备份</n-button>
           </n-card>
           <n-h6 prefix="bar"> 恢复</n-h6>
           <n-card class="set-item">
@@ -355,7 +362,6 @@ import { getLocationInfo, testApiKey } from "@/api/index.js";
 const set = setStore();
 const site = siteStore();
 const status = statusStore();
-const weatherKey = import.meta.env.VITE_WEATHER_KEY;
 const {
   themeType,
   backgroundType,
@@ -388,8 +394,8 @@ const inputMode = ref(false);
 
 // 校验apiKey
 const validApiKey = async () => {
-  const data = await testApiKey(weatherApiKey.value);
-  isValidApiKey.value = data.code === "200";
+  const resp = await testApiKey(weatherApiKey.value);
+  isValidApiKey.value = resp.data.code === "200";
   inputMode.value = false;
 };
 
@@ -419,12 +425,12 @@ const doLocationSearch = async () => {
     $message.warning("请输入有效区域");
     return;
   }
-  const data = await getLocationInfo(weatherKey, inputKeyword.value);
-  if (data.code !== "200") {
+  const resp = await getLocationInfo(weatherApiKey.value, inputKeyword.value);
+  if (resp.data.code !== "200") {
     $message.error("地区查询失败");
     return;
   }
-  locationInfos.value = data.location;
+  locationInfos.value = resp.data.location;
 };
 
 // 当前列表索引
@@ -535,13 +541,12 @@ const resetSite = () => {
   });
 };
 
-// 站点备份
-const backupSite = () => {
+// 操作备份
+const doBackup = (isBookmark) => {
+  const statusStr = isBookmark?'书签':'站点'
   try {
-    const date = new Date();
-    const dateString = date.toISOString().replace(/[:.]/g, "-");
-    const fileName = `Snavigation_Backup_${dateString}.json`;
-    const jsonData = JSON.stringify(set.$state);
+    const fileName = `Snavigation_Backup_${isBookmark?'Bookmark':'Site'}_${new Date().getTime()}.json`;
+    const jsonData = JSON.stringify(isBookmark?site.$state:set.$state);
     const blob = new Blob([jsonData], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -553,10 +558,10 @@ const backupSite = () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     // 备份完成
-    $message.success("站点备份成功");
+    $message.success(`${statusStr}备份成功`);
   } catch (error) {
-    console.error("站点备份失败：", error);
-    $message.error("站点备份失败");
+    console.error(`${statusStr}备份失败：`, error);
+    $message.error(`${statusStr}备份失败`);
   }
 };
 
@@ -677,7 +682,7 @@ onMounted(() => {
 
     &:hover {
       background-color: var(--main-background-hover-color);
-      box-shadow: 0 0 0px 2px var(--main-background-hover-color);
+      box-shadow: 0 0 0 2px var(--main-background-hover-color);
 
       &::before {
         opacity: 0;

@@ -54,7 +54,7 @@ export default defineConfig({
   ],
   server: {
     port: 5588,
-    open: true,
+    open: false,
   },
   resolve: {
     // 配置路径别名
