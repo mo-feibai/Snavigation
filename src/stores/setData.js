@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { BookmarkSort } from "@/entity/enum.js";
 
 const useSetDataStore = defineStore("setData", {
   state: () => {
@@ -25,6 +26,8 @@ const useSetDataStore = defineStore("setData", {
       autoFocus: false,
       // 搜索后搜索框自动失焦
       autoInputBlur: true,
+      // 书签排序
+      bookmarkSort: BookmarkSort.ADD_TIME,
       // 时间样式
       timeStyle: "one",
       // 天气api key

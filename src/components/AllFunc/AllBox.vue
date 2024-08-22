@@ -3,7 +3,7 @@
     <n-tabs size="large" justify-content="space-evenly" animated tab-style="margin-right:50px"
             v-model:value="curKey" ref="tabsInstRef" type="bar">
       <template #prefix>
-        <n-icon size="26" :component="Bookmarks" style="margin-left: 12px" />
+        <n-icon size="26" :component="Bookmarks" style="margin-left: 12px;opacity: 0.3" />
       </template>
       <n-tab-pane class="no-padding" :name="value.key" v-for="(value,key) in bookmarkData" :key="key">
         <Bookmark :bookmark-key="value.key" />

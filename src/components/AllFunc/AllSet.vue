@@ -222,6 +222,14 @@
             </div>
             <n-switch v-model:value="autoInputBlur" :round="false" />
           </n-card>
+          <n-h6 prefix="bar"> 书签</n-h6>
+          <n-card class="set-item">
+            <div class="name">
+              <span class="title">书签排序方式</span>
+              <span class="tip">选择一种书签排序方式</span>
+            </div>
+            <n-select class="set" v-model:value="bookmarkSort" :options="bookmarkSortOpts" />
+          </n-card>
         </n-scrollbar>
       </n-tab-pane>
       <n-tab-pane name="other" tab="其他设置">
@@ -358,6 +366,7 @@ import { storeToRefs } from "pinia";
 import { setStore, siteStore, statusStore } from "@/stores";
 import identifyInput from "@/utils/identifyInput";
 import { getLocationInfo, testApiKey } from "@/api/index.js";
+import { BookmarkSort } from "@/entity/enum.js";
 
 const set = setStore();
 const site = siteStore();
@@ -383,6 +392,7 @@ const {
   cityFullName,
   weatherApiKey,
   isValidApiKey,
+  bookmarkSort,
 } = storeToRefs(set);
 
 const recoverRef = ref(null);
@@ -511,6 +521,23 @@ const timeStyleOptions = [
   },
 ];
 
+// 书签排序选项
+const bookmarkSortOpts = [
+  {
+    label: "添加时间",
+    value: BookmarkSort.ADD_TIME,
+  },
+  {
+    label: "访问次数",
+    value: BookmarkSort.VISITS,
+  },
+  {
+    label: "字母顺序",
+    value: BookmarkSort.ALPHABETICAL_ORDER,
+  },
+];
+
+
 // 自定义壁纸
 const setCustomCover = () => {
   if (identifyInput(customCoverUrl.value) === "url") {
@@ -621,7 +648,7 @@ const recoverBookmarks = async () => {
       positiveText: "恢复",
       negativeText: "取消",
       onPositiveClick: async () => {
-        const isSuccess = await site.recoverBookmarkData(data);
+        const isSuccess = site.recoverBookmarkData(data);
         if (isSuccess) {
           $message.info("书签数据恢复成功，即将刷新");
           setTimeout(() => {

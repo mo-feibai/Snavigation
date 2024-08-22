@@ -17,11 +17,49 @@
 </template>
 
 <script setup>
-import { statusStore } from "@/stores";
+import { setStore, siteStore, statusStore } from "@/stores";
 import AllBox from "@/components/AllFunc/AllBox.vue";
 import AllSet from "@/components/AllFunc/AllSet.vue";
+import { BookmarkSort } from "@/entity/enum.js";
+import { watchPostEffect } from "vue";
+import { storeToRefs } from "pinia";
 
 const status = statusStore();
+const site = siteStore();
+const set = setStore();
+
+const { bookmarkData } = storeToRefs(site);
+
+const bookmarkSorting = (bookmarkData) => {
+  if (!bookmarkData || Object.keys(bookmarkData).length === 0) {
+    return;
+  }
+  // 遍历书签数据
+  for (const key in bookmarkData) {
+    const bookmarks = bookmarkData[key]["bookmarks"];
+    if (!bookmarks || bookmarks.length === 0) {
+      continue;
+    }
+    bookmarks.sort((a, b) => {
+      if (BookmarkSort.ALPHABETICAL_ORDER === set.bookmarkSort) {
+        return a.name.localeCompare(b.name); // name升序
+      } else if (BookmarkSort.ADD_TIME === set.bookmarkSort) {
+        return a.id - b.id; // id升序
+      } else {
+        if (a.visits !== b.visits) {
+          return (b.visits ?? 0) - (a.visits ?? 0); // visits降序
+        } else {
+          return a.name.localeCompare(b.name); // name升序
+        }
+      }
+    });
+  }
+};
+
+// 监听书签排序修改
+watchPostEffect(() => {
+  bookmarkSorting(bookmarkData.value);
+});
 </script>
 
 <style lang="scss" scoped>

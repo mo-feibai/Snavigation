@@ -15,7 +15,7 @@
             :key="index"
             class="bookmark-item"
             @contextmenu="bookmarkContextmenu($event, index)"
-            @click="bookmarkJump(item.url)"
+            @click="bookmarkJump(item.url,index)"
           >
             <div class="bookmark-avatar">
               <n-avatar
@@ -94,7 +94,7 @@ const bookmarkContextmenu = (e, index) => {
 };
 
 // 书签跳转
-const bookmarkJump = (url) => {
+const bookmarkJump = (url, index) => {
   const urlRegex = /^(https?:\/\/)/i;
   const urlFormat = urlRegex.test(url) ? url : `//${url}`;
   if (set.urlJumpType === "href") {
@@ -102,6 +102,8 @@ const bookmarkJump = (url) => {
   } else if (set.urlJumpType === "open") {
     window.open(urlFormat, "_blank");
   }
+  // 累加访问次数
+  bookmarks.value[index]["visits"] = (bookmarks.value[index]["visits"] ?? 0) + 1;
 };
 </script>
 

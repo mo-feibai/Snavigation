@@ -42,7 +42,6 @@
         <n-form-item :label="`${isCategoryOrBookmark}图标`" path="iconName">
           <div class="multi-form-item">
             <n-input
-              disabled
               v-model:value="operationValue.iconName"
               :placeholder="placeholder"
             />
