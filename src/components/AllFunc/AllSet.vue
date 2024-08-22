@@ -543,10 +543,10 @@ const resetSite = () => {
 
 // 操作备份
 const doBackup = (isBookmark) => {
-  const statusStr = isBookmark?'书签':'站点'
+  const statusStr = isBookmark ? "书签" : "站点";
   try {
-    const fileName = `Snavigation_Backup_${isBookmark?'Bookmark':'Site'}_${new Date().getTime()}.json`;
-    const jsonData = JSON.stringify(isBookmark?site.$state:set.$state);
+    const fileName = `Snavigation_Backup_${isBookmark ? "Bookmark" : "Site"}_${new Date().getTime()}.json`;
+    const jsonData = JSON.stringify(isBookmark ? site.$state.bookmarkData : set.$state);
     const blob = new Blob([jsonData], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

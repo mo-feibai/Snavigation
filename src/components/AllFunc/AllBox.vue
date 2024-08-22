@@ -1,12 +1,20 @@
 <template>
   <div class="all-box">
-    <n-tabs size="large" justify-content="space-evenly" animated tab-style="margin-right:10px"
-            v-model:value="curKey" ref="tabsInstRef">
+    <n-tabs size="large" justify-content="space-evenly" animated tab-style="margin-right:50px"
+            v-model:value="curKey" ref="tabsInstRef" type="bar">
       <template #prefix>
         <n-icon size="26" :component="Bookmarks" style="margin-left: 12px" />
       </template>
-      <n-tab-pane class="no-padding" :name="value.key" :tab="value.name" v-for="(value,key) in bookmarkData" :key="key">
+      <n-tab-pane class="no-padding" :name="value.key" v-for="(value,key) in bookmarkData" :key="key">
         <Bookmark :bookmark-key="value.key" />
+        <template #tab>
+          <div class="tab-template">
+            <div class="tab-icon">
+              <n-icon size="1.4rem" :component="(categoryIconObj[value.iconName]??categoryIconObj['Star']).component" />
+            </div>
+            <div class="tab-name"><span class="name">{{ value.name }}</span></div>
+          </div>
+        </template>
       </n-tab-pane>
       <template #suffix>
         <div title="添加类别">
@@ -55,6 +63,7 @@ import OperationModal from "@/components/AllFunc/Box/OperationModal.vue";
 import { computed, nextTick, provide, ref } from "vue";
 import { OperationSender } from "@/entity/enum.js";
 import { DEFAULT_TAB_KEY } from "@/entity/constants.js";
+import categoryIconObj from "@/assets/defaultCategoryIcon.js";
 
 const site = siteStore();
 const { bookmarkData } = storeToRefs(site);

@@ -141,6 +141,28 @@ const status = statusStore();
         }
       }
     }
+
+
+    :deep(.tab-template) {
+      display: flex;
+      gap: max(1%, 6px);
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+
+      .tab-icon, .tab-name {
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .tab-icon {
+        .n-avatar {
+          background-color: var(--main-background-light-color);
+        }
+      }
+    }
   }
 
 

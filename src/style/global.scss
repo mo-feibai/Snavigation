@@ -48,14 +48,17 @@ body {
 // NMessage
 .n-message-container {
   top: 20px !important;
+
   .n-message-wrapper {
     border-radius: 25px;
     backdrop-filter: blur(20px);
+
     .n-message {
       padding: 12px 28px;
       border-radius: 25px;
       background-color: var(--main-background-light-color);
       color: var(--main-text-color);
+
       .n-message__icon > * {
         color: var(--main-text-color);
       }
@@ -69,14 +72,18 @@ body {
   --n-bar-color: var(--main-text-color) !important;
   --n-tab-text-color-active: var(--main-text-color) !important;
   --n-tab-text-color-hover: var(--main-text-color) !important;
+
   .n-tabs-nav {
     height: 44px;
   }
+
   .n-tabs-pane-wrapper {
     height: 100%;
+
     .n-tab-pane {
       padding: 20px;
       box-sizing: border-box;
+
       &.no-padding {
         padding: 0;
       }
@@ -103,23 +110,28 @@ body {
   .n-modal-mask {
     backdrop-filter: blur(40px);
   }
+
   // n-dialog
   .n-dialog {
     border-radius: 8px;
     box-shadow: none;
     --n-icon-color: var(--main-text-color);
     --n-color: var(--main-background-light-color);
+
     .n-dialog__title {
       font-weight: bold;
       font-size: 18px;
+
       .n-dialog__icon {
         font-size: 24px;
         margin-right: 8px;
       }
     }
+
     .n-dialog__content {
       font-size: 15px;
     }
+
     .n-button {
       height: auto;
       padding: 9px 16px;
@@ -137,6 +149,7 @@ body {
       --n-color-hover: var(--main-background-hover-color);
     }
   }
+
   .n-modal {
     width: 60vw;
     max-width: 700px;
@@ -168,9 +181,8 @@ body {
 
 .fadeDown-enter-active,
 .fadeDown-leave-active {
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
+  transition: opacity 0.3s ease,
+  transform 0.3s ease;
 }
 
 .fadeDown-enter-active {
@@ -185,9 +197,8 @@ body {
 
 .show-enter-active,
 .show-leave-active {
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease-in-out;
+  transition: opacity 0.25s ease,
+  transform 0.25s ease-in-out;
 }
 
 .show-enter-from,

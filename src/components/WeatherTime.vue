@@ -94,10 +94,10 @@ const getWeatherData = async () => {
   if (timeDifference >= 5 * 60 * 1000) {
     // 获取天气数据
     const weatherResult = await getWeather(weatherKey, set.cityCode);
-    if (weatherResult.code !== "200") {
+    if (weatherResult.data.code !== "200") {
       return $message.error("地区查询失败");
     }
-    const data = weatherResult.now;
+    const data = weatherResult.data.now;
     weatherData.value = {
       condition: data.text,
       temp: data.temp,

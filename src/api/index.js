@@ -28,6 +28,19 @@ export const getWeather = async (key, location) => {
   });
 };
 
+export const getGoogleFavicon = async (domain, size) => {
+  try {
+    return await axios({
+      method: "GET",
+      url: "https://www.google.com/s2/favicons",
+      params: { domain, sz: size },
+    });
+  } catch (error) {
+    console.log("谷歌获取favicon失败", error);
+    return null;
+  }
+};
+
 /**
  * 获取搜索建议
  * https://suggestion.baidu.com
