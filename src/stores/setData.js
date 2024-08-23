@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { BookmarkSort } from "@/entity/enum.js";
+import { BackgroundType, BookmarkSort } from "@/entity/enum.js";
 
 const useSetDataStore = defineStore("setData", {
   state: () => {
@@ -7,8 +7,7 @@ const useSetDataStore = defineStore("setData", {
       // 主题类别
       themeType: "light",
       // 壁纸类别
-      // 0 本地 / 1 必应 / 2 随机风景 / 3 随机动漫/4 随机美女/ 5 自定义
-      backgroundType: 2,
+      backgroundType: BackgroundType.LOCAL,
       backgroundCustom: "",
       // 壁纸遮罩
       showBackgroundGray: true,
@@ -75,8 +74,7 @@ const useSetDataStore = defineStore("setData", {
       try {
         for (const key in data) {
           if (Object.hasOwnProperty.call(data, key)) {
-            const item = data[key];
-            this[key] = item;
+            this[key] = data[key];
           }
         }
         isSuccess = true;

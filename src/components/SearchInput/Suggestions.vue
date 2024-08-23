@@ -18,7 +18,7 @@
           @after-enter="changeSuggestionsHeights"
           @after-leave="changeSuggestionsHeights"
         >
-          <div v-if="searchKeyword !== null" class="special-result" ref="specialallResultsRef">
+          <div v-if="true" class="special-result" ref="specialallResultsRef">
             <!-- 快捷翻译 -->
             <div
               v-if="searchKeywordType === 'text'"
@@ -49,7 +49,7 @@
           @after-leave="changeSuggestionsHeights"
         >
           <div
-            v-if="searchKeyword !== null && searchSuggestionsData[0]"
+            v-if="searchSuggestionsData[0]"
             class="all-result"
             ref="allResultsRef"
           >
@@ -222,10 +222,9 @@ defineExpose({ keyboardEvents });
   background-color: var(--main-background-light-color);
   backdrop-filter: blur(30px) saturate(1.25);
   border-radius: 16px;
-  transition:
-    height 0.2s ease,
-    opacity 0.3s ease,
-    transform 0.3s ease;
+  transition: height 0.2s ease,
+  opacity 0.3s ease,
+  transform 0.3s ease;
   z-index: 1;
 
   .all-result,
@@ -238,19 +237,21 @@ defineExpose({ keyboardEvents });
       align-items: center;
       padding: 6px 12px;
       font-size: 14px;
-      transition:
-        background-color 0.3s,
-        padding-left 0.3s;
+      transition: background-color 0.3s,
+      padding-left 0.3s;
+
       .i-icon {
         opacity: 0.8;
         margin-right: 8px;
       }
+
       .text {
         width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+
       @media (min-width: 520px) {
         &:hover,
         &.focus {
@@ -258,6 +259,7 @@ defineExpose({ keyboardEvents });
           padding-left: 18px;
         }
       }
+
       &:active {
         background-color: var(--main-background-light-color);
         padding-left: 18px;

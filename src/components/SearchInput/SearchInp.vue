@@ -36,7 +36,6 @@
         id="main-input"
         ref="searchInputRef"
         type="text"
-        label="search"
         title="请输入搜索内容"
         autocomplete="false"
         :placeholder="inputTip"
@@ -181,6 +180,7 @@ const changeEngine = () => {
   max-width: 680px;
   width: calc(100% - 60px);
   transition: width 0.35s linear;
+
   .mask {
     position: fixed;
     top: 0;
@@ -189,6 +189,7 @@ const changeEngine = () => {
     height: 100%;
     z-index: 0;
   }
+
   .all {
     display: flex;
     flex-direction: row;
@@ -202,11 +203,11 @@ const changeEngine = () => {
     backdrop-filter: blur(10px);
     opacity: 1;
     animation: fade-up-in 0.7s cubic-bezier(0.37, 0.99, 0.36, 1);
-    transition:
-      transform 0.3s,
-      background-color 0.3s,
-      opacity 0.5s;
+    transition: transform 0.3s,
+    background-color 0.3s,
+    opacity 0.5s;
     z-index: 1;
+
     .input {
       display: flex;
       justify-content: center;
@@ -219,6 +220,7 @@ const changeEngine = () => {
       background: none;
       font-size: 16px;
       color: var(--main-text-color);
+
       &::placeholder {
         width: 100%;
         text-align: center;
@@ -227,6 +229,7 @@ const changeEngine = () => {
         transition: opacity 0.3s;
       }
     }
+
     .engine,
     .go {
       cursor: pointer;
@@ -237,29 +240,34 @@ const changeEngine = () => {
       width: 64px;
       font-size: 20px;
       border-radius: 30px;
-      transition:
-        background-color 0.3s,
-        opacity 0.3s;
+      transition: background-color 0.3s,
+      opacity 0.3s;
+
       &:hover {
         background-color: var(--main-background-color);
       }
+
       @media (max-width: 520px) {
         font-size: 18px;
       }
     }
   }
+
   &.small {
     width: 260px;
+
     .all {
       .engine,
       .go {
         opacity: 0;
       }
+
       .input {
         &::placeholder {
           opacity: 0.6;
         }
       }
+
       &.focus {
         .engine,
         .go {
@@ -267,6 +275,7 @@ const changeEngine = () => {
         }
       }
     }
+
     &:hover {
       // width: calc(100% - 60px);
       .all {
@@ -278,17 +287,22 @@ const changeEngine = () => {
       }
     }
   }
+
   &.focus {
     width: calc(100% - 60px);
+
     .all {
       transform: translateY(-60px);
       background-color: var(--main-input-hover-color);
+
       .input {
         color: var(--main-text-hover-color);
+
         &::placeholder {
           opacity: 0;
         }
       }
+
       .engine,
       .go,
       .delete {

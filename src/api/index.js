@@ -1,7 +1,12 @@
 import axios from "@/utils/request";
 import fetchJsonp from "fetch-jsonp";
 
-// 测试和风api
+/**
+ * 测试和风api key
+ *
+ * @param key api key
+ * @return {Promise<*>} 数据内容
+ */
 export const testApiKey = async (key) => {
   return axios({
     method: "GET",
@@ -10,7 +15,13 @@ export const testApiKey = async (key) => {
   });
 };
 
-// 获取和风位置信息
+/**
+ * 获取和风api位置信息
+ *
+ * @param key api key
+ * @param location 位置关键词
+ * @return {Promise<*>} 位置信息
+ */
 export const getLocationInfo = async (key, location) => {
   return axios({
     method: "GET",
@@ -19,7 +30,13 @@ export const getLocationInfo = async (key, location) => {
   });
 };
 
-// 获取和风天气信息
+/**
+ * 获取和风api天气信息
+ *
+ * @param key api ley
+ * @param location 位置编码
+ * @return {Promise<*>} 及时天气信息
+ */
 export const getWeather = async (key, location) => {
   return axios({
     method: "GET",
@@ -28,6 +45,13 @@ export const getWeather = async (key, location) => {
   });
 };
 
+/**
+ * 获取图标信息
+ *
+ * @param domain 域名
+ * @param size 图标大小
+ * @return {Promise<null|AxiosResponse<any>>} 图标内容
+ */
 export const getGoogleFavicon = async (domain, size) => {
   try {
     return await axios({
@@ -41,6 +65,14 @@ export const getGoogleFavicon = async (domain, size) => {
   }
 };
 
+export const getWallpaperList = async (sorting, ai_art_filter, ratios, categories, purity, page) => {
+  return axios({
+    method: "GET",
+    url: "https://wallhaven.cc/api/v1/search",
+    params: { sorting, ai_art_filter, ratios, categories, purity, page },
+  });
+};
+
 /**
  * 获取搜索建议
  * https://suggestion.baidu.com
@@ -50,12 +82,14 @@ export const getSearchSuggestions = async (keyWord) => {
   try {
     const encodedKeyword = encodeURIComponent(keyWord);
     const response = await fetchJsonp(
-      `https://suggestion.baidu.com/su?wd=${encodedKeyword}&cb=json`,
+      `https://suggestion.baidu.com/su?wd=${encodedKeyword}`,
       {
         // 回调参数
         jsonpCallback: "cb",
+        jsonpCallbackFunction: "json",
       },
     );
+    console.log(response);
     const data = await response.json();
     return data.s;
   } catch (error) {

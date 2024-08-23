@@ -29,33 +29,33 @@
                     v-if="backgroundType !== 0"
                     strong
                     secondary
-                    @click="changeBackground(0, true)"
+                    @click="changeBackground(BackgroundType.LOCAL, true)"
                   >
                     恢复默认
                   </n-button>
                 </Transition>
                 <n-button strong secondary @click="customCoverModal = true">
-                  <template v-if="backgroundType === 5" #icon>
+                  <template v-if="backgroundType === BackgroundType.CUSTOMIZE" #icon>
                     <SvgIcon iconName="icon-confirm" />
                   </template>
-                  {{ backgroundType === 5 ? "已开启自定义" : "自定义" }}
+                  {{ backgroundType === BackgroundType.CUSTOMIZE ? "已开启自定义" : "自定义" }}
                 </n-button>
               </n-space>
             </div>
             <n-grid
               class="cover-selete"
               responsive="screen"
-              cols="2 s:3 m:4 l:5"
+              cols="3 s:4 m:5 l:6"
               :x-gap="16"
               :y-gap="16"
             >
               <n-grid-item
-                v-for="(item, index) in backgroundTypeArr"
-                :key="index"
-                :class="index === backgroundType ? 'item check' : 'item'"
-                @click="changeBackground(index)"
+                v-for="item in backgroundTypeArr"
+                :key="item.id"
+                :class="item.id === backgroundType ? 'item check' : 'item'"
+                @click="changeBackground(item.id)"
               >
-                <span class="name" v-html="item.name" />
+                <div :title="item.tip"><span class="name" v-html="item.name" /></div>
               </n-grid-item>
             </n-grid>
           </n-card>
@@ -123,8 +123,13 @@
             <div class="set-multi">
               <div class="name">
                 <span class="title">天气api key</span>
-                <span class="tip">用于请求天气和位置数据(<a
-                  href="https://dev.qweather.com/docs/api/" target="_blank">和风天气</a>)</span>
+                <span class="tip"
+                  >用于请求天气和位置数据(<a
+                    href="https://dev.qweather.com/docs/api/"
+                    target="_blank"
+                    >和风天气</a
+                  >)</span
+                >
               </div>
               <n-space align="center">
                 <transition mode="out-in">
@@ -140,7 +145,9 @@
                 </transition>
                 <n-input v-model:value="weatherApiKey" :disabled="!inputMode" />
                 <Transition mode="out-in">
-                  <n-button strong secondary v-if="!inputMode" @click="inputMode = true">编辑</n-button>
+                  <n-button strong secondary v-if="!inputMode" @click="inputMode = true"
+                    >编辑
+                  </n-button>
                   <n-button strong secondary v-else @click="validApiKey">校验</n-button>
                 </Transition>
               </n-space>
@@ -308,24 +315,31 @@
         </n-space>
       </template>
     </n-modal>
-    <n-modal preset="card" title="选择城市编码" v-model:show="chooseCityCode" :bordered="false" class="location-modal">
+    <n-modal
+      preset="card"
+      title="选择城市编码"
+      v-model:show="chooseCityCode"
+      :bordered="false"
+      class="location-modal"
+    >
       <n-space justify="center">
         <n-input v-model:value="inputKeyword" />
-        <n-button strong secondary @click="doLocationSearch">
-          搜索
-        </n-button>
+        <n-button strong secondary @click="doLocationSearch"> 搜索</n-button>
       </n-space>
       <n-scrollbar class="set-scrollbar">
         <n-grid x-gap="20" y-gap="10" cols="2">
-          <n-grid-item v-for="(loc,index) of locationInfos" :key="index">
-            <n-card class="loc-info" :title="loc.name" hoverable :bordered="curIndex === index"
-                    @click="curIndex = index">
+          <n-grid-item v-for="(loc, index) of locationInfos" :key="index">
+            <n-card
+              class="loc-info"
+              :title="loc.name"
+              hoverable
+              :bordered="curIndex === index"
+              @click="curIndex = index"
+            >
               <template #header-extra>
                 {{ loc.id }}
               </template>
-              <template #footer>
-                {{ loc.country }}-{{ loc.adm1 }}-{{ loc.adm2 }}
-              </template>
+              <template #footer> {{ loc.country }}-{{ loc.adm1 }}-{{ loc.adm2 }}</template>
             </n-card>
           </n-grid-item>
         </n-grid>
@@ -366,7 +380,8 @@ import { storeToRefs } from "pinia";
 import { setStore, siteStore, statusStore } from "@/stores";
 import identifyInput from "@/utils/identifyInput";
 import { getLocationInfo, testApiKey } from "@/api/index.js";
-import { BookmarkSort } from "@/entity/enum.js";
+import { BackgroundType, BookmarkSort } from "@/entity/enum.js";
+import backgroundTypeArr from "@/assets/defaultBackgroundType.js";
 
 const set = setStore();
 const site = siteStore();
@@ -401,14 +416,12 @@ const customCoverModal = ref(false);
 const customCoverUrl = ref("");
 const inputMode = ref(false);
 
-
 // 校验apiKey
 const validApiKey = async () => {
   const resp = await testApiKey(weatherApiKey.value);
   isValidApiKey.value = resp.data.code === "200";
   inputMode.value = false;
 };
-
 
 // 是否正在搜索
 const chooseCityCode = ref(false);
@@ -420,7 +433,6 @@ const chooseACityCode = () => {
   } else {
     chooseCityCode.value = true;
   }
-
 };
 
 // 搜索关键词
@@ -457,15 +469,6 @@ const setCityCode = () => {
   chooseCityCode.value = false;
 };
 
-// 壁纸类别
-const backgroundTypeArr = [
-  { name: "本地默认", tip: "默认壁纸，随机更换" },
-  { name: "每日必应", tip: "必应每日一图，每天更新" },
-  { name: "随机风景", tip: "随机风景图，随机更换" },
-  { name: "随机动漫", tip: "随机二次元图，随机更换" },
-  { name: "随机美女", tip: "随机美女图片，随机更换" },
-];
-
 // 主题类别
 const themeTypeOptions = [
   {
@@ -494,7 +497,9 @@ const changeBackground = (type, reset = false) => {
     return true;
   }
   backgroundType.value = type;
-  $message.success(`已切换为${backgroundTypeArr[type].name}，刷新后生效`);
+  $message.success(
+    `已切换${backgroundTypeArr.filter((item) => item.id === type)[0].name}，刷新后生效`,
+  );
 };
 
 // 链接跳转方式
@@ -537,11 +542,10 @@ const bookmarkSortOpts = [
   },
 ];
 
-
 // 自定义壁纸
 const setCustomCover = () => {
   if (identifyInput(customCoverUrl.value) === "url") {
-    backgroundType.value = 5;
+    backgroundType.value = BackgroundType.CUSTOMIZE;
     backgroundCustom.value = customCoverUrl.value;
     customCoverModal.value = false;
     $message.error("已切换为自定义壁纸，刷新后生效");
@@ -549,7 +553,6 @@ const setCustomCover = () => {
     $message.error("请输入正确的网址");
   }
 };
-
 
 // 站点重置
 const resetSite = () => {
@@ -688,8 +691,9 @@ onMounted(() => {
     justify-content: center;
     border-radius: 8px;
     background-color: var(--main-background-light-color);
-    transition: background-color 0.3s,
-    box-shadow 0.3s;
+    transition:
+      background-color 0.3s,
+      box-shadow 0.3s;
 
     &.check {
       background-color: var(--main-background-hover-color);
@@ -738,6 +742,4 @@ onMounted(() => {
     }
   }
 }
-
-
 </style>

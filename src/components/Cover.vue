@@ -19,6 +19,9 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { statusStore, setStore } from "@/stores";
+import { BackgroundType } from "@/entity/enum.js";
+import { getWallpaperList } from "@/api/index.js";
+import { BACKGROUND_REQUEST, DEFAULT_PAGE_SIZE } from "@/entity/constants.js";
 
 const set = setStore();
 const status = statusStore();
@@ -31,33 +34,77 @@ const emit = defineEmits(["loadComplete"]);
 const bgRandom = Math.floor(Math.random() * 3 + 1);
 
 // 赋值壁纸
-const setBgUrl = () => {
+const setBgUrl = async () => {
   const { backgroundType } = set;
   const isMobile = window.innerWidth < window.innerHeight;
   switch (backgroundType) {
-    case 0:
+    case BackgroundType.LOCAL:
       bgUrl.value = `/background/bg${bgRandom}.jpg`;
       break;
-    case 1: {
+    case BackgroundType.BING: {
       bgUrl.value = `https://api.dujin.org/bing/${isMobile ? "m" : "1920"}.php`;
       break;
     }
-    case 2:
-      bgUrl.value = `https://api.btstu.cn/sjbz/api.php?lx=fengjing&format=images&method=${isMobile}`;
+    case BackgroundType.GENERAL:
+      bgUrl.value = await getWallpaper(BACKGROUND_REQUEST.CATEGORIES_GENERAL);
       break;
-    case 3:
-      bgUrl.value = `https://api.btstu.cn/sjbz/api.php?lx=fengjing&format=dongman&method=${isMobile}`;
+    case BackgroundType.ANIME:
+      bgUrl.value = await getWallpaper(BACKGROUND_REQUEST.CATEGORIES_ANIME);
       break;
-    case 4:
-      bgUrl.value = `https://api.btstu.cn/sjbz/api.php?lx=meizi&format=dongman&method=${isMobile}`;
+    case BackgroundType.PEOPLE:
+      bgUrl.value = await getWallpaper(BACKGROUND_REQUEST.CATEGORIES_PEOPLE);
       break;
-    case 5:
+    case BackgroundType.CUSTOMIZE:
       bgUrl.value = set.backgroundCustom;
       break;
     default:
       bgUrl.value = `/background/bg${bgRandom}.jpg`;
       break;
   }
+};
+
+// 获取wallhaven图片  curIndex wallpapers
+const getWallpaper = async (category) => {
+  // 当前时间戳
+  const currentTime = Date.now();
+  let wallpaperData = JSON.parse(localStorage.getItem("wallpaperData"));
+
+  // 缓存没有数据/当前种类与缓存种类不一致/缓存数据用完，并且距离上一次获取时间超过5分钟，重新获取
+  if (
+    !wallpaperData ||
+    category !== wallpaperData.category ||
+    (wallpaperData.curUsedIndex >= DEFAULT_PAGE_SIZE - 1 &&
+      currentTime - wallpaperData.lastFetchTime >= 5 * 60 * 1000)
+  ) {
+    console.log("==更新数据==");
+    const wallpaperList = await getWallpaperList(
+      BACKGROUND_REQUEST.SORTING,
+      BACKGROUND_REQUEST.AI_ART_FILTER,
+      BACKGROUND_REQUEST.RATIOS,
+      category,
+      BACKGROUND_REQUEST.PURITY,
+      BACKGROUND_REQUEST.PAGE,
+    );
+    wallpaperData = {
+      curUsedIndex: 0,
+      category: category,
+      lastFetchTime: currentTime,
+      wallpapers: wallpaperList.data,
+    };
+    localStorage.setItem("wallpaperData", JSON.stringify(wallpaperData));
+    return wallpaperList.data.data[wallpaperData.curUsedIndex].path;
+  }
+  if (wallpaperData.curUsedIndex < DEFAULT_PAGE_SIZE - 1) {
+    // 缓存数据没有用完，直接使用缓存数据
+    console.log("使用缓存数据curUsedIndex: " + wallpaperData.curUsedIndex);
+    wallpaperData.curUsedIndex = ++wallpaperData.curUsedIndex;
+  } else {
+    // 如果缓存数据用完，并且没有超过5分钟，重新开始
+    console.log("==重置壁纸缓存==");
+    wallpaperData.curUsedIndex = 0;
+  }
+  localStorage.setItem("wallpaperData", JSON.stringify(wallpaperData));
+  return wallpaperData.wallpapers.data[wallpaperData.curUsedIndex].path;
 };
 
 // 图片加载完成
@@ -99,12 +146,14 @@ onBeforeUnmount(() => {
   height: 100%;
   position: relative;
   background-color: var(--body-background-color);
+
   &.focus {
     .background {
       filter: blur(calc(var(--blur) + 10px)) brightness(0.8);
       transform: scale(1.3);
     }
   }
+
   .background {
     position: absolute;
     left: 0;
@@ -120,6 +169,7 @@ onBeforeUnmount(() => {
       transform 0.3s;
     animation: fade-blur-in 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
+
   .gray {
     position: absolute;
     left: 0;

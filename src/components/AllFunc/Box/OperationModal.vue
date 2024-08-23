@@ -9,23 +9,22 @@
     @after-leave="initModalData"
     class="add-modal"
   >
-    <n-card class="box-item"
-            v-if="operationModalType && (OperationSender.BOOKMARK === props.operationSender.valueOf())">
+    <n-card
+      class="box-item"
+      v-if="operationModalType && OperationSender.BOOKMARK === props.operationSender.valueOf()"
+    >
       <n-space align="end">
         <div>是否移动书签({{ isChangeCategory ? "是" : "否" }})</div>
-        <n-switch v-model:value="isChangeCategory"
-                  :disabled="!bookmarkData || Object.keys(bookmarkData).length === 1" />
+        <n-switch
+          v-model:value="isChangeCategory"
+          :disabled="!bookmarkData || Object.keys(bookmarkData).length === 1"
+        />
       </n-space>
       <n-divider title-placement="center">书签所属类别</n-divider>
       <n-select :disabled="!isChangeCategory" v-model:value="selected" :options="categoryOpts" />
     </n-card>
     <n-card class="box-item">
-      <n-form
-        ref="operationRef"
-        :rules="operationRules"
-        :model="operationValue"
-        :label-width="80"
-      >
+      <n-form ref="operationRef" :rules="operationRules" :model="operationValue" :label-width="80">
         <n-form-item label="ID" path="id">
           <n-input-number
             disabled
@@ -36,39 +35,43 @@
           />
         </n-form-item>
         <n-form-item label="图标类型">
-          <n-select v-model:value="operationValue.iconType" :options="getIconTypeOpts()"
-                    :disabled="OperationSender.CATEGORY === props.operationSender.valueOf()" />
+          <n-select
+            v-model:value="operationValue.iconType"
+            :options="getIconTypeOpts()"
+            :disabled="OperationSender.CATEGORY === props.operationSender.valueOf()"
+          />
         </n-form-item>
         <n-form-item :label="`${isCategoryOrBookmark}图标`" path="iconName">
           <div class="multi-form-item">
-            <n-input
-              v-model:value="operationValue.iconName"
-              :placeholder="placeholder"
-            />
+            <n-input v-model:value="operationValue.iconName" :placeholder="placeholder" />
 
-            <div class="bookmark-icon" v-if="OperationSender.BOOKMARK === props.operationSender.valueOf()">
+            <div
+              class="bookmark-icon"
+              v-if="OperationSender.BOOKMARK === props.operationSender.valueOf()"
+            >
               <n-avatar
-                v-if="operationValue.iconType===IconType.URL"
+                v-if="operationValue.iconType === IconType.URL"
                 class="avatar-icon"
                 size="medium"
                 fallback-src="favicon.png"
-                :src="(!operationValue.iconName || operationValue.iconName.length === 0) ? 'favicon.png' : operationValue.iconName"
+                :src="
+                  !operationValue.iconName || operationValue.iconName.length === 0
+                    ? 'favicon.png'
+                    : operationValue.iconName
+                "
               />
-              <n-avatar
-                v-else
-                class="avatar-icon"
-                size="medium">
+              <n-avatar v-else class="avatar-icon" size="medium">
                 {{ operationValue.iconName }}
               </n-avatar>
             </div>
             <div class="bookmark-icon" v-else>
               <n-avatar
-                v-if="operationValue.iconType===IconType.THIRD_PARTY"
+                v-if="operationValue.iconType === IconType.THIRD_PARTY"
                 class="avatar-icon"
                 size="medium"
                 @click="iconSelectModalOpen = true"
               >
-                <n-icon :component="categoryIconObj[operationValue.iconName]?.component??Click" />
+                <n-icon :component="categoryIconObj[operationValue.iconName]?.component ?? Click" />
               </n-avatar>
             </div>
           </div>
@@ -82,8 +85,17 @@
             :placeholder="`请输入${isCategoryOrBookmark}名称`"
           />
         </n-form-item>
-        <n-form-item label="站点链接" path="url" v-if="OperationSender.BOOKMARK === props.operationSender.valueOf()">
-          <n-input clearable v-model:value="operationValue.url" placeholder="请输入站点链接" @blur="getIcon" />
+        <n-form-item
+          label="站点链接"
+          path="url"
+          v-if="OperationSender.BOOKMARK === props.operationSender.valueOf()"
+        >
+          <n-input
+            clearable
+            v-model:value="operationValue.url"
+            placeholder="请输入站点链接"
+            @blur="getIcon"
+          />
         </n-form-item>
       </n-form>
     </n-card>
@@ -120,12 +132,12 @@
     :bordered="false"
     class="icon-select-modal"
   >
-    <n-scrollbar id='icon-scroll-container' class="icon-scrollbar">
+    <n-scrollbar id="icon-scroll-container" class="icon-scrollbar">
       <n-grid x-gap="20" y-gap="10" cols="4">
-        <n-grid-item v-for="(icon,iconName) in categoryIconObj" :key="iconName">
+        <n-grid-item v-for="(icon, iconName) in categoryIconObj" :key="iconName">
           <n-card class="icon-card" @click="selectIcon(iconName)">
             <n-icon :component="icon.component" size="40" />
-            <p style="font-size:x-small">{{ icon.chineseName }}</p>
+            <p style="font-size: x-small">{{ icon.chineseName }}</p>
           </n-card>
         </n-grid-item>
       </n-grid>
@@ -134,7 +146,6 @@
 </template>
 
 <script setup>
-
 import {
   NAvatar,
   NButton,
@@ -271,11 +282,13 @@ const operationDropdownOptions = [
 const addOperationModalOpen = () => {
   if (OperationSender.CATEGORY === props.operationSender.valueOf()) {
     // 生成 ID
-    const categoryMaxId = Object.values(bookmarkData.value).map((item) => {
-      return item.key;
-    }).reduce((max, item) => {
-      return item > max ? item : max;
-    }, -1);
+    const categoryMaxId = Object.values(bookmarkData.value)
+      .map((item) => {
+        return item.key;
+      })
+      .reduce((max, item) => {
+        return item > max ? item : max;
+      }, -1);
     // 生成表单数据
     operationValue.value.id = categoryMaxId + 1;
     operationValue.value.name = "";
@@ -332,9 +345,11 @@ const categoryAddOrEdit = () => {
   // 新增操作
   if (!operationModalType.value) {
     // 校验是否名称重复
-    const isDuplicate = Object.values(bookmarkData.value).map((item) => {
-      return item.name;
-    })?.some((item) => item === operationValue.value.name);
+    const isDuplicate = Object.values(bookmarkData.value)
+      .map((item) => {
+        return item.name;
+      })
+      ?.some((item) => item === operationValue.value.name);
     if (isDuplicate) {
       $message.error("新增与已有类别重复");
       return false;
@@ -350,7 +365,10 @@ const categoryAddOrEdit = () => {
     };
 
     // 如果默认类别存在且无标签，则移除默认类别
-    if (bookmarkData.value[DEFAULT_TAB_KEY] && bookmarkData.value[DEFAULT_TAB_KEY].bookmarks.length === 0) {
+    if (
+      bookmarkData.value[DEFAULT_TAB_KEY] &&
+      bookmarkData.value[DEFAULT_TAB_KEY].bookmarks.length === 0
+    ) {
       delete bookmarkData.value[DEFAULT_TAB_KEY];
     }
 
@@ -364,9 +382,12 @@ const categoryAddOrEdit = () => {
   } else {
     // 编辑操作
     // 校验重复的名称
-    const isDuplicate = Object.values(bookmarkData.value).filter((item) => item.key !== operationValue.value.id).map((item) => {
-      return item.name;
-    })?.some((item) => item === operationValue.value.name);
+    const isDuplicate = Object.values(bookmarkData.value)
+      .filter((item) => item.key !== operationValue.value.id)
+      .map((item) => {
+        return item.name;
+      })
+      ?.some((item) => item === operationValue.value.name);
     if (isDuplicate) {
       $message.error("编辑后与已有类别重复");
       return false;
@@ -390,8 +411,7 @@ const bookmarkAddOrEdit = () => {
   if (!operationModalType.value) {
     // 校验是否名称重复
     const isDuplicate = bookmarks.value?.some(
-      (item) =>
-        item.name === operationValue.value.name || item.url === operationValue.value.url,
+      (item) => item.name === operationValue.value.name || item.url === operationValue.value.url,
     );
     if (isDuplicate) {
       $message.error("新增与已有书签重复");
@@ -415,7 +435,10 @@ const bookmarkAddOrEdit = () => {
     // 编辑操作
     // 是否移动书签到别的类别
     let willMoveBookmarks;
-    if (OperationSender.BOOKMARK === props.operationSender.valueOf() && selected.value !== props.bookmarkKey) {
+    if (
+      OperationSender.BOOKMARK === props.operationSender.valueOf() &&
+      selected.value !== props.bookmarkKey
+    ) {
       willMoveBookmarks = toRef(bookmarkData.value[selected.value], "bookmarks");
     } else {
       willMoveBookmarks = ref(null);
@@ -426,14 +449,16 @@ const bookmarkAddOrEdit = () => {
 
     // 是否移动书签，如果要移动则在移动后的种类中比较重复
     if (isChangeCategory.value) {
-      isDuplicate = willMoveBookmarks.value?.some((item) =>
-        item.name === operationValue.value.name || item.url === operationValue.value.url,
+      isDuplicate = willMoveBookmarks.value?.some(
+        (item) => item.name === operationValue.value.name || item.url === operationValue.value.url,
       );
     } else {
-      isDuplicate = bookmarks.value?.filter((item) => item.id !== operationValue.value.id).some(
-        (item) =>
-          item.name === operationValue.value.name || item.url === operationValue.value.url,
-      );
+      isDuplicate = bookmarks.value
+        ?.filter((item) => item.id !== operationValue.value.id)
+        .some(
+          (item) =>
+            item.name === operationValue.value.name || item.url === operationValue.value.url,
+        );
     }
     if (isDuplicate) {
       $message.error("编辑后与类别下已有书签重复");
@@ -532,7 +557,10 @@ const operationDel = () => {
         bookmarks.value.splice(indexToRemove, 1);
         if (bookmarks.value.length === 0) {
           // 删除默认类别
-          if (DEFAULT_TAB_KEY === parseInt(props.bookmarkKey) && Object.keys(bookmarkData.value).length > 1) {
+          if (
+            DEFAULT_TAB_KEY === parseInt(props.bookmarkKey) &&
+            Object.keys(bookmarkData.value).length > 1
+          ) {
             delete bookmarkData.value[DEFAULT_TAB_KEY];
 
             // 更新tab指示条位置
@@ -556,7 +584,10 @@ const operationDel = () => {
 
 // 初始化弹窗值
 const initModalData = () => {
-  operationValue.value.iconType = OperationSender.CATEGORY === props.operationSender.valueOf() ? IconType.THIRD_PARTY : IconType.URL;
+  operationValue.value.iconType =
+    OperationSender.CATEGORY === props.operationSender.valueOf()
+      ? IconType.THIRD_PARTY
+      : IconType.URL;
   operationValue.value.iconName = "";
   operationValue.value.id = null;
   operationValue.value.name = "";
@@ -592,12 +623,12 @@ const getIcon = async () => {
     } else {
       $message.error("获取图标失败");
       operationValue.value.iconName = "";
-      operationValue.value.iconType = IconType.TEXT;
+      placeholder.value = "获取图标失败,自行填写图标链接或者切换为文本图标";
     }
   } else {
     $message.error("获取图标失败");
     operationValue.value.iconName = "";
-    operationValue.value.iconType = IconType.TEXT;
+    placeholder.value = "获取图标失败,自行填写图标链接或者切换为文本图标";
   }
 };
 
@@ -672,7 +703,10 @@ const getIconTypeOpts = () => {
     result.push({
       label: iconTypeKey.toLowerCase(),
       value: value,
-      disabled: OperationSender.BOOKMARK === props.operationSender.valueOf() ? value === IconType.THIRD_PARTY : value === IconType.URL,
+      disabled:
+        OperationSender.BOOKMARK === props.operationSender.valueOf()
+          ? value === IconType.THIRD_PARTY
+          : value === IconType.URL,
     });
   }
   return result;
@@ -717,7 +751,6 @@ watchPostEffect(() => {
 // 图标选择弹窗
 const iconSelectModalOpen = ref(false);
 
-
 const selectIcon = (iconName) => {
   operationValue.value.iconName = iconName;
   operationValue.value.iconType = IconType.THIRD_PARTY;
@@ -729,16 +762,17 @@ onMounted(() => {
   initModalData();
 });
 
-
 // 暴露组件的方法
 defineExpose({
-  addOperationModalOpen, operationContextmenu, editCategoryModalOpen, operationDropdownSelect,
+  addOperationModalOpen,
+  operationContextmenu,
+  editCategoryModalOpen,
+  operationDropdownSelect,
 });
 </script>
 
 <style scoped lang="scss">
 .add-modal {
-
   .box-item {
     width: 100%;
     border-radius: 8px;
