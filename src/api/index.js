@@ -68,7 +68,7 @@ export const getGoogleFavicon = async (domain, size) => {
 export const getWallpaperList = async (sorting, ai_art_filter, ratios, categories, purity, page) => {
   return axios({
     method: "GET",
-    url: "https://wallhaven.cc/api/v1/search",
+    url: "/api/v1/search",
     params: { sorting, ai_art_filter, ratios, categories, purity, page },
   });
 };
