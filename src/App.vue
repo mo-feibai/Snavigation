@@ -74,7 +74,7 @@ const set = setStore();
 const status = statusStore();
 const mainClickable = ref(false);
 
-// 获取配置
+// 获取文本配置
 const welcomeText = import.meta.env.VITE_WELCOME_TEXT ?? "欢迎访问本站";
 
 // 鼠标右键
