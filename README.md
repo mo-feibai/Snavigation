@@ -7,7 +7,6 @@
 
 ![Snavigation.png](https://s2.loli.net/2022/07/15/FE6U2BJCynHDep8.jpg)
 
-
 ### 功能
 
 - [x] 载入动画
@@ -27,9 +26,10 @@
 
 ---
 未来考虑
-  - 后端存储数据源
-  - 书签备份加密
-  - 书签备份方式
+
+- 后端存储数据源
+- 书签备份加密
+- 书签备份方式
 
 ### 配置
 
@@ -72,13 +72,12 @@
 
 ### API
 
-- [搏天 API](https://api.btstu.cn/doc/sjbz.php)
+- [wallhavencc(良心壁纸网站) api](https://wallhaven.cc/)
 - [缙哥哥 API](https://www.dujin.org/3618.html)
 - [Hitokoto 一言](https://hitokoto.cn/)
 - [和风天气api(需自行申请api key)](https://dev.qweather.com/docs/api/)
 
 ### 鸣谢
-
 
 - 本站部分样式及功能参考自[青柠起始页](https://limestart.cn/)
 - 基于[imsyy/Snavigation](https://github.com/imsyy/Snavigation)二次修改
