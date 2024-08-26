@@ -10,7 +10,7 @@ import fetchJsonp from "fetch-jsonp";
 export const testApiKey = async (key) => {
   return axios({
     method: "GET",
-    url: "https://geoapi.qweather.com/v2/city/top",
+    url: "/geoApi/v2/city/top",
     params: { key, range: "cn", number: 1 },
   });
 };
@@ -25,7 +25,7 @@ export const testApiKey = async (key) => {
 export const getLocationInfo = async (key, location) => {
   return axios({
     method: "GET",
-    url: "https://geoapi.qweather.com/v2/city/lookup",
+    url: "/geoApi/v2/city/lookup",
     params: { key, location },
   });
 };
@@ -40,7 +40,7 @@ export const getLocationInfo = async (key, location) => {
 export const getWeather = async (key, location) => {
   return axios({
     method: "GET",
-    url: "https://devapi.qweather.com/v7/weather/now",
+    url: "/weatherApi/v7/weather/now",
     params: { key, location },
   });
 };
@@ -56,7 +56,7 @@ export const getGoogleFavicon = async (domain, size) => {
   try {
     return await axios({
       method: "GET",
-      url: "https://www.google.com/s2/favicons",
+      url: "/iconApi/s2/favicons",
       params: { domain, sz: size },
     });
   } catch (error) {
@@ -65,10 +65,17 @@ export const getGoogleFavicon = async (domain, size) => {
   }
 };
 
-export const getWallpaperList = async (sorting, ai_art_filter, ratios, categories, purity, page) => {
+export const getWallpaperList = async (
+  sorting,
+  ai_art_filter,
+  ratios,
+  categories,
+  purity,
+  page,
+) => {
   return axios({
     method: "GET",
-    url: "/api/v1/search",
+    url: "/wallpaperApi/api/v1/search",
     params: { sorting, ai_art_filter, ratios, categories, purity, page },
   });
 };
@@ -81,14 +88,11 @@ export const getWallpaperList = async (sorting, ai_art_filter, ratios, categorie
 export const getSearchSuggestions = async (keyWord) => {
   try {
     const encodedKeyword = encodeURIComponent(keyWord);
-    const response = await fetchJsonp(
-      `https://suggestion.baidu.com/su?wd=${encodedKeyword}`,
-      {
-        // 回调参数
-        jsonpCallback: "cb",
-        jsonpCallbackFunction: "json",
-      },
-    );
+    const response = await fetchJsonp(`https://suggestion.baidu.com/su?wd=${encodedKeyword}`, {
+      // 回调参数
+      jsonpCallback: "cb",
+      jsonpCallbackFunction: "json",
+    });
     console.log(response);
     const data = await response.json();
     return data.s;
