@@ -23,7 +23,7 @@ export default (req, res) => {
     target,
     changeOrigin: true,
     pathRewrite: {
-      // 通过路径重写，去除请求路径中的 `/api`
+      // 通过路径重写，来去除请求路径中的 `/api`
       "^/wallpaperApi/": "/",
       // "^/geoApi/": "/",
       // "^/weatherApi/": "/",
