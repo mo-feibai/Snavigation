@@ -3,12 +3,10 @@
 
 import { createProxyMiddleware } from "http-proxy-middleware";
 
-// const { createProxyMiddleware } = require("http-proxy-middleware");
 export default (req, res) => {
   let target = "";
   // 代理目标地址
   // 这里使用 backend 主要用于区分 vercel serverless 的 api 路径
-  console.log("proxy middleware:", req);
   if (req.url.startsWith("/wallpaperApi") || req.url.startsWith("/api")) {
     target = "https://wallhaven.cc";
   } else if (req.url.startsWith("/geoApi")) {
@@ -19,15 +17,21 @@ export default (req, res) => {
     target = "https://www.google.com";
   }
   // 创建代理对象并转发请求
+  const rewriteFn = function (path, req) {
+    console.log("req is:", req);
+    console.log("path is:", path);
+    return path;
+  };
+
   createProxyMiddleware({
     target,
     changeOrigin: true,
-    pathRewrite: {
-      // 通过路径重写，来去除请求路径中的 `/api`
-      // "^/wallpaperApi/": "/",
-      // "^/geoApi/": "/",
-      // "^/weatherApi/": "/",
-      // "^/iconApi/": "/",
-    },
+    pathRewrite: rewriteFn,
+    // pathRewrite: {
+    //   // "^/wallpaperApi/": "/",
+    //   // "^/geoApi/": "/",
+    //   // "^/weatherApi/": "/",
+    //   // "^/iconApi/": "/",
+    // },
   })(req, res);
 };
