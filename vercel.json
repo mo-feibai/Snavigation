@@ -1,8 +1,20 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/proxy"
+      "source": "/wallpaperApi/:match*",
+      "destination": "https://wallhaven.cc/:match*"
+    },
+    {
+      "source": "/geoApi/:match*",
+      "destination": "https://geoapi.qweather.com/:match*"
+    },
+    {
+      "source": "/weatherApi/:match*",
+      "destination": "https://devapi.qweather.com/:match*"
+    },
+    {
+      "source": "/iconApi/:match*",
+      "destination": "https://www.google.com/:match*"
     }
   ]
 }
