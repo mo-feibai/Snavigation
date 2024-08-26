@@ -75,7 +75,7 @@ export const getWallpaperList = async (
 ) => {
   return axios({
     method: "GET",
-    url: "/api/v1/search",
+    url: "/wallpaperApi/api/v1/search",
     params: { sorting, ai_art_filter, ratios, categories, purity, page },
   });
 };
