@@ -9,7 +9,7 @@ export default (req, res) => {
   // 代理目标地址
   // 这里使用 backend 主要用于区分 vercel serverless 的 api 路径
   console.log("proxy middleware:", req);
-  if (req.url.startsWith("/wallpaperApi")) {
+  if (req.url.startsWith("/wallpaperApi") || req.url.startsWith("/api")) {
     target = "https://wallhaven.cc";
   } else if (req.url.startsWith("/geoApi")) {
     target = "https://geoapi.qweather.com";
@@ -24,7 +24,7 @@ export default (req, res) => {
     changeOrigin: true,
     pathRewrite: {
       // 通过路径重写，来去除请求路径中的 `/api`
-      "^/wallpaperApi/": "/",
+      // "^/wallpaperApi/": "/",
       // "^/geoApi/": "/",
       // "^/weatherApi/": "/",
       // "^/iconApi/": "/",
