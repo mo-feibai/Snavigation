@@ -42,6 +42,7 @@
                 </n-button>
               </n-space>
             </div>
+            <n-divider />
             <n-grid
               class="cover-selete"
               responsive="screen"
@@ -184,7 +185,7 @@
           <n-card v-if="timeStyle === 'one'" class="set-item">
             <div class="name">
               <span class="title">时间显秒</span>
-              <span class="tip">是否在分钟后面显示秒数</span>
+              <span class="tip">分钟后面显示秒数(仅横向排布)</span>
             </div>
             <n-switch v-model:value="showSeconds" :round="false" />
           </n-card>
@@ -331,15 +332,15 @@
           <n-grid-item v-for="(loc, index) of locationInfos" :key="index">
             <n-card
               class="loc-info"
+              :class="{ selected: curIndex === index }"
               :title="loc.name"
               hoverable
-              :bordered="curIndex === index"
               @click="curIndex = index"
             >
               <template #header-extra>
                 {{ loc.id }}
               </template>
-              <template #footer> {{ loc.country }}-{{ loc.adm1 }}-{{ loc.adm2 }}</template>
+              <template #footer> {{ loc.country }}•{{ loc.adm1 }}•{{ loc.adm2 }}</template>
             </n-card>
           </n-grid-item>
         </n-grid>
@@ -374,6 +375,7 @@ import {
   NSwitch,
   NTabPane,
   NTabs,
+  NDivider,
 } from "naive-ui";
 import { AlertCircle, CircleCheck, CircleX, Edit } from "@vicons/tabler";
 import { storeToRefs } from "pinia";
@@ -405,6 +407,7 @@ const {
   timeStyle,
   cityCode,
   cityFullName,
+  cityName,
   weatherApiKey,
   isValidApiKey,
   bookmarkSort,
@@ -462,8 +465,10 @@ const curIndex = ref(-1);
 const setCityCode = () => {
   const curCity = locationInfos.value[curIndex.value];
   if (curCity) {
-    cityCode.value = curCity.id;
-    cityFullName.value = `${curCity.country}/${curCity.adm1}/${curCity.adm2}/${curCity.name}`;
+    const { id, country, adm1, adm2, name } = curCity;
+    cityCode.value = id;
+    cityFullName.value = `${country}•${adm1}•${adm2}•${name}`;
+    cityName.value = adm2;
     $message.success(`已设置城市${curCity.name}，刷新后生效`);
   }
   chooseCityCode.value = false;
@@ -736,9 +741,16 @@ onMounted(() => {
     transition: max-height 0.3s;
 
     .loc-info {
-      background-color: #6e543f;
-      opacity: 0.6;
-      border-color: white;
+      background-color: var(--main-background-light-color);
+
+      &:hover {
+        background-color: var(--main-background-hover-color);
+      }
+    }
+
+    .selected {
+      background-color: var(--main-background-color);
+      box-shadow: var(--main-box-shadow);
     }
   }
 }

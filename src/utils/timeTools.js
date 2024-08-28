@@ -16,11 +16,14 @@ export const getCurrentTime = (ShowZero = true, Use12Hour = false) => {
     const month = time.getMonth() + 1;
     const day = formatTime(time.getDate());
     // 处理时钟
-    let hour = ShowZero ? formatTime(time.getHours()) : time.getHours();
+    let hour = time.getHours();
     let amPm = "";
     if (Use12Hour) {
       hour = format12Hour(hour);
       amPm = getAmPm(time.getHours());
+    }
+    if (ShowZero) {
+      hour = formatTime(hour);
     }
     const minute = formatTime(time.getMinutes());
     const second = formatTime(time.getSeconds());
@@ -33,7 +36,7 @@ export const getCurrentTime = (ShowZero = true, Use12Hour = false) => {
       time.getDate(),
     );
     // 返回时间
-    const currentTime = {
+    return {
       year,
       month,
       day,
@@ -53,7 +56,6 @@ export const getCurrentTime = (ShowZero = true, Use12Hour = false) => {
         text: lunar.lunarMonthName + lunar.lunarDayName,
       },
     };
-    return currentTime;
   } catch (error) {
     console.error("时间获取出错：" + error);
     return {};
@@ -67,21 +69,29 @@ export const getCurrentTime = (ShowZero = true, Use12Hour = false) => {
 export const getGreeting = () => {
   const currentTime = new Date();
   const currentHour = currentTime.getHours();
-  let greeting = "";
-  if (currentHour >= 6 && currentHour < 9) {
-    greeting = "早上好";
-  } else if (currentHour >= 9 && currentHour < 12) {
-    greeting = "上午好";
-  } else if (currentHour >= 12 && currentHour < 18) {
-    greeting = "下午好";
-  } else if (currentHour >= 18 && currentHour < 20) {
-    greeting = "傍晚好";
-  } else if (currentHour >= 20 && currentHour < 24) {
-    greeting = "晚上好";
-  } else if (currentHour >= 4 && currentHour < 6) {
-    greeting = "凌晨好";
-  } else {
-    greeting = "夜深了";
+
+  let greeting;
+  switch (true) {
+    case currentHour >= 6 && currentHour < 9:
+      greeting = "早上好";
+      break;
+    case currentHour >= 9 && currentHour < 12:
+      greeting = "上午好";
+      break;
+    case currentHour >= 12 && currentHour < 18:
+      greeting = "下午好";
+      break;
+    case currentHour >= 18 && currentHour < 20:
+      greeting = "傍晚好";
+      break;
+    case currentHour >= 20 && currentHour < 24:
+      greeting = "晚上好";
+      break;
+    case currentHour >= 4 && currentHour < 6:
+      greeting = "凌晨好";
+      break;
+    default:
+      greeting = "夜深了";
   }
   return greeting;
 };

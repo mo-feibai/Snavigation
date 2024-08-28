@@ -12,6 +12,37 @@
     ]"
     @click.stop
   >
+    <div v-if="set.showWeather" class="weather">
+      <div class="weather-info-left">
+        <n-avatar
+          :size="50"
+          :src="`https://a.hecdn.net/img/common/icon/202106d/${weatherData?.icon ?? 100}.png`"
+          class="weather-icon"
+        />
+        <span>{{ set.cityName }}</span>
+      </div>
+      <div class="weather-info-right">
+        <span class="temperature"
+          >{{ weatherData?.temp ?? "温度如何" }}<span v-if="weatherData?.temp"> °</span></span
+        >
+        <span class="status">{{ weatherData?.condition ?? "天气怎样" }}</span>
+        <span class="wind"
+          >{{ weatherData?.windDir ?? "风向何方" }}
+          <span v-if="weatherData?.windLevel" class="wind-level">
+            {{ weatherData.windLevel }} 级
+          </span></span
+        >
+      </div>
+    </div>
+    <div class="date">
+      <span class="month">{{ timeData.month ?? "0" }}</span>
+      <span class="day">{{ timeData.day ?? "0" }}</span>
+      <span class="weekday">{{ timeData.weekday ?? "星期八" }}</span>
+    </div>
+    <div v-if="set.showLunar" class="lunar">
+      <span class="year">{{ timeData.lunar?.GanZhiYear }}</span>
+      <span class="text">{{ timeData.lunar?.text }}</span>
+    </div>
     <div
       class="time"
       @click.stop="
@@ -33,28 +64,11 @@
         <span class="amPm">{{ timeData.amPm ?? "am" }}</span>
       </template>
     </div>
-    <div v-if="set.showLunar" class="lunar">
-      <span class="year">{{ timeData.lunar?.GanZhiYear }}</span>
-      <span class="text">{{ timeData.lunar?.text }}</span>
-    </div>
-    <div class="date">
-      <span class="month">{{ timeData.month ?? "0" }}</span>
-      <span class="day">{{ timeData.day ?? "0" }}</span>
-      <span class="weekday">{{ timeData.weekday ?? "星期八" }}</span>
-    </div>
-    <div class="weather">
-      <span>{{ set.cityFullName }}</span>
-    </div>
-    <div v-if="set.showWeather" class="weather">
-      <span class="status">{{ weatherData?.condition ?? "N/A" }}</span>
-      <span class="temperature">{{ weatherData?.temp ?? "N/A" }} ℃</span>
-      <span class="wind">{{ weatherData?.windDir ?? "N/A" }}</span>
-      <span v-if="weatherData?.windLevel" class="wind-level"> {{ weatherData.windLevel }} 级 </span>
-    </div>
   </div>
 </template>
 
 <script setup>
+import { NAvatar } from "naive-ui";
 import { getCurrentTime } from "@/utils/timeTools";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { setStore, statusStore } from "@/stores";
@@ -127,7 +141,6 @@ onMounted(() => {
   timeInterval.value = setInterval(updateTimeData, 1000);
   // 天气
   getWeatherData();
-
 });
 
 onBeforeUnmount(() => {
@@ -145,9 +158,10 @@ onBeforeUnmount(() => {
   transform: translateY(-140px);
   color: var(--main-text-color);
   animation: fade-time-in 0.6s cubic-bezier(0.21, 0.78, 0.36, 1);
-  transition: transform 0.3s,
-  opacity 0.5s,
-  margin-bottom 0.3s;
+  transition:
+    transform 0.3s,
+    opacity 0.5s,
+    margin-bottom 0.3s;
   z-index: 1;
 
   .time {
@@ -182,8 +196,7 @@ onBeforeUnmount(() => {
   }
 
   .date {
-    font-size: 1.15rem;
-    opacity: 0.8;
+    font-size: 1.2rem;
     margin: 4px 0;
     text-shadow: var(--main-text-shadow);
 
@@ -203,8 +216,8 @@ onBeforeUnmount(() => {
   }
 
   .lunar {
-    font-size: 0.9rem;
-    opacity: 0.6;
+    font-size: 0.8rem;
+    opacity: 0.8;
     text-shadow: var(--main-text-shadow);
 
     .year {
@@ -216,16 +229,42 @@ onBeforeUnmount(() => {
   }
 
   .weather {
-    opacity: 0.7;
+    display: flex;
     font-size: 1rem;
     text-shadow: var(--main-text-shadow);
+    gap: 10px;
+    margin-bottom: 16px;
 
-    .temperature {
-      margin: 0 6px;
+    .weather-info-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.7rem;
+
+      .weather-icon {
+        background: transparent;
+      }
     }
 
-    .wind-level {
-      margin-left: 6px;
+    .weather-info-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: start;
+      gap: 0.3rem;
+
+      .temperature {
+        font-size: 1.4rem;
+        line-height: 1;
+      }
+
+      .status,
+      .wind,
+      .wind-level {
+        font-size: 0.8rem;
+        line-height: 1;
+      }
     }
   }
 
@@ -249,12 +288,12 @@ onBeforeUnmount(() => {
     opacity: 0;
   }
 
-  &.lunar {
-    margin-bottom: 50px;
-  }
-
   &.two {
-    padding-bottom: 60px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    gap: 16px;
 
     .time {
       display: flex;
@@ -262,7 +301,7 @@ onBeforeUnmount(() => {
       align-items: center;
 
       span {
-        line-height: normal;
+        line-height: 1;
       }
 
       .separator,
@@ -273,15 +312,93 @@ onBeforeUnmount(() => {
       .hour {
         &::after {
           content: "/";
-          font-size: 2rem;
+          font-size: 2.8rem;
           display: flex;
           align-items: center;
           justify-content: center;
           line-height: 0;
           opacity: 0.4;
           transform: rotate(50deg);
+          margin: 20px 0;
+        }
+      }
+
+      .minute {
+        vertical-align: -10px;
+      }
+    }
+
+    .date {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      span {
+        line-height: 1;
+      }
+
+      .month {
+        text-align: center;
+
+        &::after {
+          content: "月";
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 0;
           margin: 12px 0;
         }
+      }
+
+      .day {
+        &::after {
+          content: "日";
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 0;
+          margin: 12px 0;
+        }
+      }
+
+      .weekday {
+        writing-mode: vertical-rl;
+        letter-spacing: 6px;
+        text-align: center;
+        margin-top: 12px;
+
+        &:before {
+          content: "|";
+          font-size: 1rem;
+          line-height: 0;
+          opacity: 0.4;
+          margin-bottom: 10px;
+        }
+      }
+    }
+
+    .lunar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      span {
+        line-height: 1;
+      }
+
+      .year {
+        writing-mode: vertical-rl;
+        letter-spacing: 3px;
+
+        &::after {
+          content: "年";
+        }
+      }
+
+      .text {
+        writing-mode: vertical-rl;
+        letter-spacing: 3px;
+        margin-bottom: 3px;
       }
     }
   }

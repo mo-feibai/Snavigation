@@ -72,10 +72,11 @@ watchPostEffect(() => {
   backdrop-filter: blur(20px);
   color: var(--main-text-color);
   border-radius: 8px;
-  transition: opacity 0.3s,
-  transform 0.3s,
-  margin-top 0.3s,
-  height 0.3s;
+  transition:
+    opacity 0.3s,
+    transform 0.3s,
+    margin-top 0.3s,
+    height 0.3s;
   z-index: 2;
 
   .all-set {
@@ -85,6 +86,11 @@ watchPostEffect(() => {
     :deep(.scrollbar) {
       max-height: calc(64vh - 84px);
       transition: max-height 0.3s;
+
+      @media (max-width: 478px) {
+        max-height: calc(60vh - 84px);
+        transition: max-height 0.3s;
+      }
     }
 
     :deep(.set-item) {
@@ -139,7 +145,6 @@ watchPostEffect(() => {
         }
 
         .set-multi {
-
           display: flex;
           flex-direction: row;
           align-items: center;
@@ -180,7 +185,6 @@ watchPostEffect(() => {
       }
     }
 
-
     :deep(.tab-template) {
       display: flex;
       gap: max(1%, 6px);
@@ -188,7 +192,8 @@ watchPostEffect(() => {
       justify-content: center;
       align-items: center;
 
-      .tab-icon, .tab-name {
+      .tab-icon,
+      .tab-name {
         display: flex;
         height: 100%;
         justify-content: center;
@@ -202,7 +207,6 @@ watchPostEffect(() => {
       }
     }
   }
-
 
   &.big {
     height: 80%;

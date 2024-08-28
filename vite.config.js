@@ -55,6 +55,28 @@ export default defineConfig({
   server: {
     port: 5588,
     open: false,
+    proxy: {
+      "/wallpaperApi": {
+        target: "https://wallhaven.cc",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/wallpaperApi/, ""),
+      },
+      "/geoApi": {
+        target: "https://geoapi.qweather.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/geoApi/, ""),
+      },
+      "/weatherApi": {
+        target: "https://devapi.qweather.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/weatherApi/, ""),
+      },
+      "/iconApi": {
+        target: "https://www.google.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/iconApi/, ""),
+      },
+    },
   },
   resolve: {
     // 配置路径别名

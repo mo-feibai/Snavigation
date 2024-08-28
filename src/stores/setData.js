@@ -36,7 +36,9 @@ const useSetDataStore = defineStore("setData", {
       // 城市代码
       cityCode: "101210113",
       // 城市全名
-      cityFullName: "中国/浙江省/杭州/西湖",
+      cityFullName: "如何知你身在何方",
+      // 城市所在名称
+      cityName: "何处",
       // 显示农历
       showLunar: false,
       // 是否显秒
