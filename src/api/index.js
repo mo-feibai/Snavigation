@@ -48,16 +48,21 @@ export const getWeather = async (key, location) => {
 /**
  * 获取图标信息
  *
- * @param domain 域名
+ * @param client 客户端
+ * @param type 类别
+ * @param fallbackOpts 回调配置
+ * @param url url
  * @param size 图标大小
  * @return {Promise<null|AxiosResponse<any>>} 图标内容
  */
-export const getGoogleFavicon = async (domain, size) => {
+export const getGoogleFavicon = async (client, type, fallbackOpts, url, size) => {
+  // 产生0-3的随机整数
+  const randInt = Math.floor(Math.random() * 4);
   try {
     return await axios({
       method: "GET",
-      url: "/iconApi/s2/favicons",
-      params: { domain, sz: size },
+      url: `/iconApi/t${randInt}/faviconV2`,
+      params: { client, type, fallback_opts: fallbackOpts, url, size },
     });
   } catch (error) {
     console.log("谷歌获取favicon失败", error);
@@ -65,6 +70,17 @@ export const getGoogleFavicon = async (domain, size) => {
   }
 };
 
+/**
+ * 获取壁纸列表
+ *
+ * @param sorting 排序方式
+ * @param ai_art_filter 是否过滤ai
+ * @param ratios 比率
+ * @param categories 分类
+ * @param purity 纯度
+ * @param page 页数
+ * @return {Promise<*>} 壁纸列表
+ */
 export const getWallpaperList = async (
   sorting,
   ai_art_filter,
@@ -77,6 +93,18 @@ export const getWallpaperList = async (
     method: "GET",
     url: "/wallpaperApi/api/v1/search",
     params: { sorting, ai_art_filter, ratios, categories, purity, page },
+  });
+};
+
+/**
+ * 获取一言
+ *
+ * @return {Promise<*>} 一言的json信息
+ */
+export const getHitokoto = async () => {
+  return axios({
+    method: "GET",
+    url: "/hitokotoApi",
   });
 };
 
