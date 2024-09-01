@@ -13,41 +13,12 @@
       "destination": "https://devapi.qweather.com/:match*"
     },
     {
-      "source": "/iconApi/:match*",
-      "destination": "https://www.google.com/:match*"
+      "source": "/iconApi/t:id(\\d+)/:match*",
+      "destination": "https://t:id.gstatic.com/:match*"
     },
     {
       "source": "/hitokotoApi/:match*",
       "destination": "https://international.v1.hitokoto.cn/:match*"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "*.gstatic.com"
-        }
-      ],
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
-        }
-      ]
     }
   ]
 }

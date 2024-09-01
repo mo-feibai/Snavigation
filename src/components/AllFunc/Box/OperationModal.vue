@@ -172,7 +172,11 @@ import { siteStore } from "@/stores/index.js";
 import { storeToRefs } from "pinia";
 import { IconType, OperationSender } from "@/entity/enum.js";
 import SvgIcon from "@/components/SvgIcon.vue";
-import { DEFAULT_ICON_SIZE, DEFAULT_TAB_KEY, DEFAULT_TAB_NAME } from "@/entity/constants.js";
+import {
+  DEFAULT_TAB_KEY,
+  DEFAULT_TAB_NAME,
+  ICON_REQUEST,
+} from "@/entity/constants.js";
 import { getGoogleFavicon } from "@/api/index.js";
 import categoryIconObj from "@/assets/defaultCategoryIcon.js";
 
@@ -607,14 +611,8 @@ const getIcon = async () => {
     return;
   }
 
-  const urlSplits = operationValue.value.url.split("/");
-  let domain;
-  if (urlSplits[2]) {
-    domain = urlSplits[2];
-  } else {
-    domain = ""; //如果url不正确就取空
-  }
-  const resp = await getGoogleFavicon(domain, DEFAULT_ICON_SIZE);
+  const { CLIENT, FALLBACK_OPTS, TYPE, SIZE } = ICON_REQUEST;
+  const resp = await getGoogleFavicon(CLIENT, TYPE, FALLBACK_OPTS, operationValue.value.url, SIZE);
   if (resp && resp.data) {
     const contentLocation = resp.headers["content-location"];
     if (contentLocation) {
