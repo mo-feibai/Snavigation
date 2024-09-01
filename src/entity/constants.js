@@ -7,6 +7,14 @@ export const DEFAULT_TAB_NAME = "默认";
 // 默认icon大小
 export const DEFAULT_ICON_SIZE = 64;
 
+// 默认图标请求
+export const ICON_REQUEST = Object.freeze({
+  SIZE: 64,
+  CLIENT:"SOCIAL",
+  TYPE:"FAVICON",
+  "FALLBACK_OPTS":"TYPE,SIZE,URL",
+});
+
 // 背景壁纸请求
 export const BACKGROUND_REQUEST = Object.freeze({
   /**
