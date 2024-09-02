@@ -299,7 +299,7 @@ const operationDropdownOptions = computed(() => {
       icon: renderIcon("delete-1"),
     },
   ];
-  if (operationValue.value.iconType === IconType.LOCAL_SERVER) {
+  if (isLocal.value) {
     options.push({
       label: "官网",
       key: "visitOfficial",
@@ -642,7 +642,7 @@ const getIcon = async (fromOfficialWebsite) => {
   if (!operationValue.value) {
     return;
   }
-  if (!fromOfficialWebsite && operationValue.value.iconType === IconType.LOCAL_SERVER) {
+  if (!fromOfficialWebsite && operationValue.value.iconType !== IconType.URL) {
     return;
   }
   if (
