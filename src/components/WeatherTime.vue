@@ -12,7 +12,11 @@
     ]"
     @click.stop
   >
-    <div v-if="set.showWeather" class="weather">
+    <div
+      v-if="set.showWeather"
+      v-show="set.timeStyle === 'two' || !props.keyboardState"
+      class="weather"
+    >
       <div class="weather-info-left">
         <n-avatar
           :size="50"
@@ -34,6 +38,7 @@
         >
       </div>
     </div>
+
     <div class="date">
       <span class="month">{{ timeData.month ?? "0" }}</span>
       <span class="day">{{ timeData.day ?? "0" }}</span>
@@ -76,6 +81,14 @@ import { getWeather } from "@/api";
 
 const set = setStore();
 const status = statusStore();
+
+const props = defineProps({
+  // 手机软键盘状态，是否弹出
+  keyboardState: {
+    required: true,
+    type: Boolean,
+  },
+});
 
 // 时间数据
 const timeData = ref({});
@@ -151,11 +164,11 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .weather-time {
   position: absolute;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
-  transform: translateY(-140px);
+  transform: translateY(-120px);
   color: var(--main-text-color);
   animation: fade-time-in 0.6s cubic-bezier(0.21, 0.78, 0.36, 1);
   transition:
@@ -269,7 +282,7 @@ onBeforeUnmount(() => {
   }
 
   &.focus {
-    transform: translateY(-180px);
+    transform: translateY(-160px);
     // transform: translateY(-24vh);
   }
 
@@ -289,7 +302,6 @@ onBeforeUnmount(() => {
   }
 
   &.two {
-    padding-bottom: 20px;
     display: flex;
     flex-direction: row;
     align-items: end;

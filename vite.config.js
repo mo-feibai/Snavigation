@@ -72,9 +72,14 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/weatherApi/, ""),
       },
       "/iconApi": {
-        target: "https://www.google.com",
+        target: "https://t3.gstatic.com",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/iconApi/, ""),
+        rewrite: (path) => path.replace(/^\/iconApi\/t[0123]/, ""),
+      },
+      "/hitokotoApi": {
+        target: "https://international.v1.hitokoto.cn",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/hitokotoApi/, ""),
       },
     },
   },

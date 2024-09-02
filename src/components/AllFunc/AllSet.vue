@@ -119,6 +119,14 @@
               :tooltip="false"
             />
           </n-card>
+          <n-h6 prefix="bar"> 一言</n-h6>
+          <n-card class="set-item">
+            <div class="name">
+              <span class="title">一言</span>
+              <span class="tip">是否显示一言</span>
+            </div>
+            <n-switch v-model:value="showHitokoto" :round="false" />
+          </n-card>
           <n-h6 prefix="bar"> 天气与时间</n-h6>
           <n-card class="set-item">
             <div class="set-multi">
@@ -394,6 +402,7 @@ const {
   backgroundCustom,
   showBackgroundGray,
   backgroundBlur,
+  showHitokoto,
   smallInput,
   autoFocus,
   autoInputBlur,

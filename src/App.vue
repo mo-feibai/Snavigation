@@ -14,7 +14,7 @@
         @contextmenu="mainContextmenu"
         @keydown="mainPressKeyboard"
       >
-        <WeatherTime />
+        <WeatherTime :keyboard-state="keybordState" />
         <SearchInp @contextmenu.stop />
         <AllFunc @contextmenu.stop />
         <Footer />
@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-import { onMounted, nextTick, watch, ref } from "vue";
+import { onMounted, nextTick, watch, ref, onUnmounted } from "vue";
 import { statusStore, setStore } from "@/stores";
 import { getGreeting } from "@/utils/timeTools";
 import Provider from "@/components/Provider.vue";
@@ -69,6 +69,7 @@ import WeatherTime from "@/components/WeatherTime.vue";
 import SearchInp from "@/components/SearchInput/SearchInp.vue";
 import AllFunc from "@/components/AllFunc/AllFunc.vue";
 import Footer from "@/components/Footer.vue";
+import MonitorKeyboard from "@/utils/mobileKeybordMonitor.js";
 
 const set = setStore();
 const status = statusStore();
@@ -119,8 +120,31 @@ watch(
   (val) => changeThemeType(val),
 );
 
+// 监听手机键盘状态
+let monitorKeyboard = null;
+const keybordState = ref(false);
+const getKeyboardState = () => {
+  monitorKeyboard = new MonitorKeyboard();
+  monitorKeyboard.onStart();
+
+  // 监听虚拟键盘弹出事件
+  monitorKeyboard.onShow(() => {
+    keybordState.value = true;
+  });
+
+  //监听键盘收起的事件
+  monitorKeyboard.onHidden(() => {
+    keybordState.value = false;
+  });
+};
+
 onMounted(() => {
   changeThemeType(set.themeType);
+  getKeyboardState();
+});
+
+onUnmounted(() => {
+  monitorKeyboard.onEnd();
 });
 </script>
 
@@ -189,9 +213,10 @@ onMounted(() => {
       border-radius: 8px;
       color: var(--main-text-color);
       z-index: 1;
-      transition: opacity 0.3s,
-      background-color 0.3s,
-      transform 0.3s;
+      transition:
+        opacity 0.3s,
+        background-color 0.3s,
+        transform 0.3s;
 
       &:hover {
         backdrop-filter: blur(20px);

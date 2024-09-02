@@ -292,7 +292,7 @@ const changeEngine = () => {
     width: calc(100% - 60px);
 
     .all {
-      transform: translateY(-60px);
+      transform: translateY(-40px);
       background-color: var(--main-input-hover-color);
 
       .input {

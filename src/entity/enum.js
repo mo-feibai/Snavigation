@@ -32,6 +32,11 @@ export const IconType = Object.freeze({
    * 第三方图标
    */
   THIRD_PARTY: 3,
+  /**
+   * 本地/服务器
+   */
+  LOCAL_SERVER:4
+
 });
 
 /**

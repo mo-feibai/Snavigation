@@ -13,6 +13,8 @@ const useSetDataStore = defineStore("setData", {
       showBackgroundGray: true,
       // 壁纸模糊
       backgroundBlur: 0,
+      // 显示一言
+      showHitokoto: true,
       // 搜索引擎
       searchEngine: "bing",
       lastSearchEngine: "bing",

@@ -11,27 +11,26 @@
           :y-gap="10"
         >
           <n-grid-item
-            v-for="(item,index) in bookmarks"
+            v-for="(item, index) in bookmarks"
             :key="index"
             class="bookmark-item"
             @contextmenu="bookmarkContextmenu($event, index)"
-            @click="bookmarkJump(item.url,index)"
+            @click="bookmarkJump(item.url, index)"
           >
             <div class="bookmark-avatar">
-              <n-avatar
-                v-if="IconType.URL === item.iconType"
-                size="small"
-                fallback-src="favicon.png"
-                :src="(!item.iconName || item.iconName.length === 0) ? 'favicon.png' : item.iconName"
-              />
-              <n-avatar
-                v-else
-                class="avatar-icon"
-                size="medium">
+              <n-avatar v-if="IconType.TEXT === item.iconType" class="avatar-icon" size="medium">
                 {{ item.iconName ?? "无图" }}
               </n-avatar>
+              <n-avatar
+                v-else
+                size="small"
+                fallback-src="favicon.png"
+                :src="!item.iconName || item.iconName.length === 0 ? 'favicon.png' : item.iconName"
+              />
             </div>
-            <div class="bookmark-name"><span class="name">{{ item.name }}</span></div>
+            <div class="bookmark-name">
+              <span class="name">{{ item.name }}</span>
+            </div>
           </n-grid-item>
           <n-grid-item
             class="bookmark-item"
@@ -58,8 +57,11 @@
       </n-button>
     </div>
   </Transition>
-  <OperationModal :operation-sender="OperationSender.BOOKMARK" :bookmark-key="props.bookmarkKey.toString()"
-                  ref="operationModal" />
+  <OperationModal
+    :operation-sender="OperationSender.BOOKMARK"
+    :bookmark-key="props.bookmarkKey.toString()"
+    ref="operationModal"
+  />
 </template>
 
 <script setup>
@@ -127,8 +129,9 @@ const bookmarkJump = (url, index) => {
       background-color: var(--main-background-light-color);
       border-radius: 8px;
       font-size: 16px;
-      transition: background-color 0.3s,
-      box-shadow 0.3s;
+      transition:
+        background-color 0.3s,
+        box-shadow 0.3s;
 
       .bookmark-avatar {
         height: 100%;

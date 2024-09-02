@@ -50,7 +50,14 @@
               v-if="OperationSender.BOOKMARK === props.operationSender.valueOf()"
             >
               <n-avatar
-                v-if="operationValue.iconType === IconType.URL"
+                v-if="operationValue.iconType === IconType.TEXT"
+                class="avatar-icon"
+                size="medium"
+              >
+                {{ operationValue.iconName }}
+              </n-avatar>
+              <n-avatar
+                v-else
                 class="avatar-icon"
                 size="medium"
                 fallback-src="favicon.png"
@@ -60,9 +67,6 @@
                     : operationValue.iconName
                 "
               />
-              <n-avatar v-else class="avatar-icon" size="medium">
-                {{ operationValue.iconName }}
-              </n-avatar>
             </div>
             <div class="bookmark-icon" v-else>
               <n-avatar
@@ -94,7 +98,19 @@
             clearable
             v-model:value="operationValue.url"
             placeholder="请输入站点链接"
-            @blur="getIcon"
+            @blur="getIcon(false)"
+          />
+        </n-form-item>
+        <n-form-item
+          label="官网链接"
+          path="url"
+          v-if="operationValue.iconType === IconType.LOCAL_SERVER"
+        >
+          <n-input
+            clearable
+            v-model:value="operationValue.officialUrl"
+            placeholder="请输入官网链接"
+            @blur="getIcon(true)"
           />
         </n-form-item>
       </n-form>
@@ -168,15 +184,11 @@ import {
 import { Click } from "@vicons/tabler";
 import { computed, h, inject, nextTick, onMounted, ref, toRef, watchPostEffect } from "vue";
 import identifyInput from "@/utils/identifyInput.js";
-import { siteStore } from "@/stores/index.js";
+import { setStore, siteStore } from "@/stores/index.js";
 import { storeToRefs } from "pinia";
 import { IconType, OperationSender } from "@/entity/enum.js";
 import SvgIcon from "@/components/SvgIcon.vue";
-import {
-  DEFAULT_TAB_KEY,
-  DEFAULT_TAB_NAME,
-  ICON_REQUEST,
-} from "@/entity/constants.js";
+import { DEFAULT_TAB_KEY, DEFAULT_TAB_NAME, ICON_REQUEST } from "@/entity/constants.js";
 import { getGoogleFavicon } from "@/api/index.js";
 import categoryIconObj from "@/assets/defaultCategoryIcon.js";
 
@@ -211,6 +223,7 @@ const isCategoryOrBookmark = computed(() => {
 });
 
 const site = siteStore();
+const set = setStore();
 const { bookmarkData } = storeToRefs(site);
 
 const bookmarks = toRef(bookmarkData.value[props.bookmarkKey], "bookmarks");
@@ -279,6 +292,11 @@ const operationDropdownOptions = [
     label: "删除",
     key: "delete",
     icon: renderIcon("delete-1"),
+  },
+  {
+    label: "官网",
+    key: "visitOfficial",
+    icon: renderIcon("guanwang"),
   },
 ];
 
@@ -429,6 +447,7 @@ const bookmarkAddOrEdit = () => {
       url: operationValue.value.url,
       iconName: operationValue.value.iconName,
       iconType: operationValue.value.iconType,
+      officialUrl: operationValue.value.officialUrl,
     });
 
     // 操作成功并关闭弹窗
@@ -498,12 +517,14 @@ const bookmarkAddOrEdit = () => {
         url: operationValue.value.url,
         iconType: operationValue.value.iconType,
         iconName: operationValue.value.iconName,
+        officialUrl: operationValue.value.officialUrl,
       });
     } else {
       bookmarks.value[index].name = operationValue.value.name;
       bookmarks.value[index].url = operationValue.value.url;
       bookmarks.value[index].iconName = operationValue.value.iconName;
       bookmarks.value[index].iconType = operationValue.value.iconType;
+      bookmarks.value[index].officialUrl = operationValue.value.officialUrl;
     }
 
     // 编辑成功后关闭弹窗
@@ -606,18 +627,28 @@ const operationModalClose = () => {
 };
 
 //获取站点图标
-const getIcon = async () => {
-  if (!operationValue.value || operationValue.value.url.trim() === "") {
+const getIcon = async (fromOfficialWebsite) => {
+  if (!operationValue.value) {
     return;
   }
-
+  if (!fromOfficialWebsite && operationValue.value.iconType === IconType.LOCAL_SERVER) {
+    return;
+  }
+  if (
+    (fromOfficialWebsite && operationValue.value.officialUrl.trim() === "") ||
+    (!fromOfficialWebsite && operationValue.value.url.trim() === "")
+  ) {
+    return;
+  }
+  const iconFromUrl = fromOfficialWebsite
+    ? operationValue.value.officialUrl
+    : operationValue.value.url;
   const { CLIENT, FALLBACK_OPTS, TYPE, SIZE } = ICON_REQUEST;
-  const resp = await getGoogleFavicon(CLIENT, TYPE, FALLBACK_OPTS, operationValue.value.url, SIZE);
+  const resp = await getGoogleFavicon(CLIENT, TYPE, FALLBACK_OPTS, iconFromUrl, SIZE);
   if (resp && resp.data) {
     const contentLocation = resp.headers["content-location"];
     if (contentLocation) {
       operationValue.value.iconName = contentLocation;
-      operationValue.value.iconType = IconType.URL;
     } else {
       $message.error("获取图标失败");
       operationValue.value.iconName = "";
@@ -660,8 +691,8 @@ const operationContextmenu = (e, operationBookmarkIndex) => {
   operationDropdownShow.value = false;
   // 写入弹窗数据
   operationData = bookmarks.value[operationBookmarkIndex];
-  const { id, name, url, iconType, iconName } = operationData;
-  operationValue.value = { id, name, url, iconName, iconType };
+  const { id, name, url, iconType, iconName, officialUrl } = operationData;
+  operationValue.value = { id, name, url, iconName, iconType, officialUrl };
   nextTick().then(() => {
     operationDropdownShow.value = true;
     operationDropdownX.value = e.clientX;
@@ -688,6 +719,17 @@ const operationDropdownSelect = (key) => {
         },
       });
       break;
+    case "visitOfficial": {
+      const url = operationValue.value.officialUrl;
+      const urlRegex = /^(https?:\/\/)/i;
+      const urlFormat = urlRegex.test(url) ? url : `//${url}`;
+      if (set.urlJumpType === "href") {
+        window.location.href = urlFormat;
+      } else if (set.urlJumpType === "open") {
+        window.open(urlFormat, "_blank");
+      }
+      break;
+    }
     default:
       break;
   }
