@@ -48,11 +48,7 @@
           @after-enter="changeSuggestionsHeights"
           @after-leave="changeSuggestionsHeights"
         >
-          <div
-            v-if="searchSuggestionsData[0]"
-            class="all-result"
-            ref="allResultsRef"
-          >
+          <div v-if="searchSuggestionsData[0]" class="all-result" ref="allResultsRef">
             <div
               v-for="item in searchSuggestionsData"
               class="s-result"
@@ -75,7 +71,7 @@ import { nextTick, ref, watch } from "vue";
 import { statusStore, setStore } from "@/stores";
 import { getSearchSuggestions } from "@/api";
 import debounce from "@/utils/debounce";
-import identifyInput from "@/utils/identifyInput";
+import { identifyInput } from "@/utils/identifyInput";
 
 const set = setStore();
 const status = statusStore();
@@ -222,9 +218,10 @@ defineExpose({ keyboardEvents });
   background-color: var(--main-background-light-color);
   backdrop-filter: blur(30px) saturate(1.25);
   border-radius: 16px;
-  transition: height 0.2s ease,
-  opacity 0.3s ease,
-  transform 0.3s ease;
+  transition:
+    height 0.2s ease,
+    opacity 0.3s ease,
+    transform 0.3s ease;
   z-index: 1;
 
   .all-result,
@@ -237,8 +234,9 @@ defineExpose({ keyboardEvents });
       align-items: center;
       padding: 6px 12px;
       font-size: 14px;
-      transition: background-color 0.3s,
-      padding-left 0.3s;
+      transition:
+        background-color 0.3s,
+        padding-left 0.3s;
 
       .i-icon {
         opacity: 0.8;

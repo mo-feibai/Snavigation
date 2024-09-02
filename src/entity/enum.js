@@ -35,8 +35,7 @@ export const IconType = Object.freeze({
   /**
    * 本地/服务器
    */
-  LOCAL_SERVER:4
-
+  LOCAL_SERVER: 4,
 });
 
 /**

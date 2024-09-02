@@ -388,7 +388,7 @@ import {
 import { AlertCircle, CircleCheck, CircleX, Edit } from "@vicons/tabler";
 import { storeToRefs } from "pinia";
 import { setStore, siteStore, statusStore } from "@/stores";
-import identifyInput from "@/utils/identifyInput";
+import { identifyInput } from "@/utils/identifyInput";
 import { getLocationInfo, testApiKey } from "@/api/index.js";
 import { BackgroundType, BookmarkSort } from "@/entity/enum.js";
 import backgroundTypeArr from "@/assets/defaultBackgroundType.js";

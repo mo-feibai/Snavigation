@@ -1,24 +1,47 @@
 <template>
   <div class="all-box">
-    <n-tabs size="large" justify-content="space-evenly" animated tab-style="margin-right:50px"
-            v-model:value="curKey" ref="tabsInstRef" type="bar">
+    <n-tabs
+      size="large"
+      justify-content="space-evenly"
+      animated
+      tab-style="margin-right:50px"
+      v-model:value="curKey"
+      ref="tabsInstRef"
+      type="bar"
+    >
       <template #prefix>
-        <n-icon size="26" :component="Bookmarks" style="margin-left: 12px;opacity: 0.3" />
+        <n-icon size="26" :component="Bookmarks" style="margin-left: 12px; opacity: 0.3" />
       </template>
-      <n-tab-pane class="no-padding" :name="value.key" v-for="(value,key) in bookmarkData" :key="key">
+      <n-tab-pane
+        class="no-padding"
+        :name="value.key"
+        v-for="(value, key) in bookmarkData"
+        :key="key"
+      >
         <Bookmark :bookmark-key="value.key" />
         <template #tab>
           <div class="tab-template">
             <div class="tab-icon">
-              <n-icon size="1.4rem" :component="(categoryIconObj[value.iconName]??categoryIconObj['Star']).component" />
+              <n-icon
+                size="1.4rem"
+                :component="(categoryIconObj[value.iconName] ?? categoryIconObj['Star']).component"
+              />
             </div>
-            <div class="tab-name"><span class="name">{{ value.name }}</span></div>
+            <div class="tab-name">
+              <span class="name">{{ value.name }}</span>
+            </div>
           </div>
         </template>
       </n-tab-pane>
       <template #suffix>
         <div title="添加类别">
-          <n-button secondary circle size="small" style="margin-right:6px" @click="addCategoryModalOpen">
+          <n-button
+            secondary
+            circle
+            size="small"
+            style="margin-right: 6px"
+            @click="addCategoryModalOpen"
+          >
             <template #icon>
               <n-icon size="18">
                 <PlaylistAdd />
@@ -27,8 +50,14 @@
           </n-button>
         </div>
         <div title="编辑类别">
-          <n-button secondary circle size="small" style="margin-right:6px" @click="editCategoryModalOpen"
-                    :disabled="curKey === DEFAULT_TAB_KEY">
+          <n-button
+            secondary
+            circle
+            size="small"
+            style="margin-right: 6px"
+            @click="editCategoryModalOpen"
+            :disabled="curKey === DEFAULT_TAB_KEY"
+          >
             <template #icon>
               <n-icon size="18">
                 <Edit />
@@ -37,8 +66,14 @@
           </n-button>
         </div>
         <div title="删除类别">
-          <n-button secondary circle size="small" style="margin-right:6px" @click="confirmDel"
-                    :disabled="curKey === DEFAULT_TAB_KEY">
+          <n-button
+            secondary
+            circle
+            size="small"
+            style="margin-right: 6px"
+            @click="confirmDel"
+            :disabled="curKey === DEFAULT_TAB_KEY"
+          >
             <template #icon>
               <n-icon size="18">
                 <Trash />
@@ -48,8 +83,11 @@
         </div>
       </template>
     </n-tabs>
-    <OperationModal ref="operationModal" :operation-sender="OperationSender.CATEGORY"
-                    :del-key="curKey?curKey.toString():''" />
+    <OperationModal
+      ref="operationModal"
+      :operation-sender="OperationSender.CATEGORY"
+      :category-key="curKey ? curKey.toString() : ''"
+    />
   </div>
 </template>
 
@@ -94,7 +132,7 @@ const handleSyncPosition = (value) => {
 
 // 编辑类别
 const editCategoryModalOpen = () => {
-  operationModal.value.editCategoryModalOpen(curKey.value);
+  operationModal.value.editCategoryModalOpen();
 };
 
 // 类别删除确认

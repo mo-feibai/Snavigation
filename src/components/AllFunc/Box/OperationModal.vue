@@ -34,6 +34,35 @@
             :show-button="false"
           />
         </n-form-item>
+        <n-form-item :label="`${isCategoryOrBookmark}名称`" path="name">
+          <n-input
+            clearable
+            show-count
+            maxlength="14"
+            v-model:value="operationValue.name"
+            :placeholder="`请输入${isCategoryOrBookmark}名称`"
+          />
+        </n-form-item>
+        <n-form-item
+          label="站点链接"
+          path="url"
+          v-if="OperationSender.BOOKMARK === props.operationSender.valueOf()"
+        >
+          <n-input
+            clearable
+            v-model:value="operationValue.url"
+            placeholder="请输入站点链接"
+            @blur="getIcon(false)"
+          />
+        </n-form-item>
+        <n-form-item label="官网链接" path="url" v-if="isLocal">
+          <n-input
+            clearable
+            v-model:value="operationValue.officialUrl"
+            placeholder="请输入官网链接"
+            @blur="getIcon(true)"
+          />
+        </n-form-item>
         <n-form-item label="图标类型">
           <n-select
             v-model:value="operationValue.iconType"
@@ -79,39 +108,6 @@
               </n-avatar>
             </div>
           </div>
-        </n-form-item>
-        <n-form-item :label="`${isCategoryOrBookmark}名称`" path="name">
-          <n-input
-            clearable
-            show-count
-            maxlength="14"
-            v-model:value="operationValue.name"
-            :placeholder="`请输入${isCategoryOrBookmark}名称`"
-          />
-        </n-form-item>
-        <n-form-item
-          label="站点链接"
-          path="url"
-          v-if="OperationSender.BOOKMARK === props.operationSender.valueOf()"
-        >
-          <n-input
-            clearable
-            v-model:value="operationValue.url"
-            placeholder="请输入站点链接"
-            @blur="getIcon(false)"
-          />
-        </n-form-item>
-        <n-form-item
-          label="官网链接"
-          path="url"
-          v-if="operationValue.iconType === IconType.LOCAL_SERVER"
-        >
-          <n-input
-            clearable
-            v-model:value="operationValue.officialUrl"
-            placeholder="请输入官网链接"
-            @blur="getIcon(true)"
-          />
         </n-form-item>
       </n-form>
     </n-card>
@@ -183,7 +179,7 @@ import {
 } from "naive-ui";
 import { Click } from "@vicons/tabler";
 import { computed, h, inject, nextTick, onMounted, ref, toRef, watchPostEffect } from "vue";
-import identifyInput from "@/utils/identifyInput.js";
+import { identifyInput, isLocalIP } from "@/utils/identifyInput.js";
 import { setStore, siteStore } from "@/stores/index.js";
 import { storeToRefs } from "pinia";
 import { IconType, OperationSender } from "@/entity/enum.js";
@@ -203,15 +199,18 @@ const renderIcon = (icon) => {
 };
 
 const props = defineProps({
+  // 操作的发送者 - 书签(bookmark)/类别(category)
   operationSender: {
     type: Number,
     required: true,
   },
+  // 书签的key,发送者为书签时填写
   bookmarkKey: {
     type: String,
     required: false,
   },
-  delKey: {
+  // 类别的key,发送者为类别时填写
+  categoryKey: {
     type: String,
     required: false,
   },
@@ -220,6 +219,11 @@ const props = defineProps({
 // 判断文字显示书签还是类别
 const isCategoryOrBookmark = computed(() => {
   return OperationSender.CATEGORY === props.operationSender.valueOf() ? "类别" : "书签";
+});
+
+// 判断地址是否为本地地址
+const isLocal = computed(() => {
+  return isLocalIP(operationValue.value.url);
 });
 
 const site = siteStore();
@@ -282,23 +286,29 @@ const isChangeCategory = ref(false);
 const operationDropdownX = ref(0);
 const operationDropdownY = ref(0);
 const operationDropdownShow = ref(false);
-const operationDropdownOptions = [
-  {
-    label: "编辑",
-    key: "edit",
-    icon: renderIcon("edit"),
-  },
-  {
-    label: "删除",
-    key: "delete",
-    icon: renderIcon("delete-1"),
-  },
-  {
-    label: "官网",
-    key: "visitOfficial",
-    icon: renderIcon("guanwang"),
-  },
-];
+const operationDropdownOptions = computed(() => {
+  let options = [
+    {
+      label: "编辑",
+      key: "edit",
+      icon: renderIcon("edit"),
+    },
+    {
+      label: "删除",
+      key: "delete",
+      icon: renderIcon("delete-1"),
+    },
+  ];
+  if (operationValue.value.iconType === IconType.LOCAL_SERVER) {
+    options.push({
+      label: "官网",
+      key: "visitOfficial",
+      icon: renderIcon("guanwang"),
+      disabled: (operationValue.value.officialUrl?.trim() ?? "") === "",
+    });
+  }
+  return options;
+});
 
 // 开启添加书签
 const addOperationModalOpen = () => {
@@ -331,17 +341,17 @@ const addOperationModalOpen = () => {
 };
 
 // 开启类别编辑弹窗
-const editCategoryModalOpen = (curIndex) => {
+const editCategoryModalOpen = () => {
   operationModalType.value = true;
   operationModalShow.value = true;
 
   // 写入弹窗数据
   operationData = {
-    id: bookmarkData.value[curIndex].key,
-    name: bookmarkData.value[curIndex].name,
+    id: bookmarkData.value[props.categoryKey].key,
+    name: bookmarkData.value[props.categoryKey].name,
     url: "",
-    iconType: bookmarkData.value[curIndex].iconType,
-    iconName: bookmarkData.value[curIndex].iconName,
+    iconType: bookmarkData.value[props.categoryKey].iconType,
+    iconName: bookmarkData.value[props.categoryKey].iconName,
   };
   // 对象复制，防止引用
   Object.assign(operationValue.value, operationData);
@@ -538,7 +548,7 @@ const bookmarkAddOrEdit = () => {
 const operationDel = () => {
   if (OperationSender.CATEGORY === props.operationSender.valueOf()) {
     // 判断该类别下是否包含书签
-    const willRemoveBookmarks = bookmarkData.value[props.delKey].bookmarks;
+    const willRemoveBookmarks = bookmarkData.value[props.categoryKey].bookmarks;
     if (willRemoveBookmarks && willRemoveBookmarks.length > 0) {
       // 如果默认类别不存在，添加默认类别
       if (!bookmarkData.value[DEFAULT_TAB_KEY]) {
@@ -562,14 +572,14 @@ const operationDel = () => {
       };
     }
     const keyArr = Object.keys(bookmarkData.value);
-    let curKeyIndex = keyArr.findIndex((item) => item === props.delKey);
+    let curKeyIndex = keyArr.findIndex((item) => item === props.categoryKey);
     let nextKey;
     if (curKeyIndex === keyArr.length - 1) {
       nextKey = keyArr[curKeyIndex - 1];
     } else {
       nextKey = keyArr[curKeyIndex + 1];
     }
-    delete bookmarkData.value[props.delKey];
+    delete bookmarkData.value[props.categoryKey];
 
     // 删除后重置指示条
     syncPositionHandler(parseInt(nextKey));
@@ -617,6 +627,7 @@ const initModalData = () => {
   operationValue.value.id = null;
   operationValue.value.name = "";
   operationValue.value.url = "";
+  operationValue.value.officialUrl = "";
 };
 
 // 关闭弹窗
